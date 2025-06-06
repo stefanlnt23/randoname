@@ -334,12 +334,8 @@ export default function Home() {
                 Save Favorites
               </span>
               <span className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-primary" />
-                Name Meanings
-              </span>
-              <span className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-secondary" />
-                Related Names
+                <Copy className="w-4 h-4 text-primary" />
+                Copy Names
               </span>
             </div>
             <div className="mt-6 text-xs text-muted-foreground/70 text-center">
@@ -615,64 +611,32 @@ export default function Home() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => fetchNameOrigin(nameData.name)}
-                                title="Show name origin"
-                                className="text-muted-foreground hover:text-primary hover:bg-background/50 h-8 w-8 p-0"
-                                disabled={nameOriginMutation.isPending}
-                              >
-                                {nameOriginMutation.isPending ? (
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                  <BookOpen className="w-4 h-4" />
-                                )}
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => toggleNameMeaning(nameData.name)}
-                                title="Show meaning"
-                                className="text-muted-foreground hover:text-primary hover:bg-background/50 h-8 w-8 p-0"
-                                disabled={lookupNameMutation.isPending}
-                              >
-                                {lookupNameMutation.isPending ? (
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                  <Info className="w-4 h-4" />
-                                )}
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => findRelatedNames(nameData.name, nameData.usage, nameData.gender)}
-                                title="Find related names"
-                                className="text-muted-foreground hover:text-secondary hover:bg-background/50 h-8 w-8 p-0"
-                                disabled={relatedNamesMutation.isPending}
-                              >
-                                {relatedNamesMutation.isPending ? (
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                  <Users className="w-4 h-4" />
-                                )}
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => copyToClipboard(nameData.name)}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  copyToClipboard(nameData.name);
+                                }}
                                 title="Copy to clipboard"
                                 className="text-muted-foreground hover:text-secondary hover:bg-background/50 h-8 w-8 p-0"
+                                type="button"
                               >
                                 <Copy className="w-4 h-4" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => saveName(nameData)}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  saveName(nameData);
+                                }}
                                 title={isNameSaved(nameData.name) ? "Remove from favorites" : "Add to favorites"}
                                 className={`transition-colors duration-300 h-8 w-8 p-0 ${
                                   isNameSaved(nameData.name)
                                     ? 'text-accent hover:text-accent/80'
                                     : 'text-muted-foreground hover:text-accent'
                                 } hover:bg-background/50`}
+                                type="button"
                               >
                                 <Heart className={`w-4 h-4 ${isNameSaved(nameData.name) ? 'fill-current' : ''}`} />
                               </Button>
