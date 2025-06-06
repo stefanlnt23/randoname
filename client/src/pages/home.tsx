@@ -615,6 +615,20 @@ export default function Home() {
                               <Button
                                 variant="ghost"
                                 size="sm"
+                                onClick={() => fetchNameOrigin(nameData.name)}
+                                title="Show name origin"
+                                className="text-muted-foreground hover:text-primary hover:bg-background/50 h-8 w-8 p-0"
+                                disabled={nameOriginMutation.isPending}
+                              >
+                                {nameOriginMutation.isPending ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <BookOpen className="w-4 h-4" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => toggleNameMeaning(nameData.name)}
                                 title="Show meaning"
                                 className="text-muted-foreground hover:text-primary hover:bg-background/50 h-8 w-8 p-0"
@@ -623,7 +637,7 @@ export default function Home() {
                                 {lookupNameMutation.isPending ? (
                                   <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
-                                  <BookOpen className="w-4 h-4" />
+                                  <Info className="w-4 h-4" />
                                 )}
                               </Button>
                               <Button
@@ -693,6 +707,50 @@ export default function Home() {
                                   <span className="text-muted-foreground text-sm bg-primary/10 px-2 py-1 rounded">
                                     {nameData.gender === 'm' ? 'Masculine' : nameData.gender === 'f' ? 'Feminine' : nameData.gender}
                                   </span>
+                                </div>
+                              )}
+                              {nameData.originData && (
+                                <div>
+                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <Globe className="w-4 h-4 text-primary" />
+                                    Origin
+                                  </h4>
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-muted-foreground font-medium">Country:</span>
+                                      <span className="text-sm bg-primary/10 px-2 py-1 rounded">
+                                        {nameData.originData.countryOrigin}
+                                      </span>
+                                      {nameData.originData.countryOriginAlt && (
+                                        <span className="text-sm bg-secondary/10 px-2 py-1 rounded">
+                                          {nameData.originData.countryOriginAlt}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-muted-foreground font-medium">Region:</span>
+                                      <span className="text-sm text-muted-foreground">
+                                        {nameData.originData.regionOrigin}
+                                      </span>
+                                    </div>
+                                    {nameData.originData.subRegionOrigin && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-muted-foreground font-medium">Sub-region:</span>
+                                        <span className="text-sm text-muted-foreground">
+                                          {nameData.originData.subRegionOrigin}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-muted-foreground font-medium">Confidence:</span>
+                                      <span className="text-sm text-muted-foreground">
+                                        {nameData.originData.probabilityCalibrated > 0 
+                                          ? `${Math.round(nameData.originData.probabilityCalibrated * 100)}%`
+                                          : 'Calibrating...'
+                                        }
+                                      </span>
+                                    </div>
+                                  </div>
                                 </div>
                               )}
                             </div>

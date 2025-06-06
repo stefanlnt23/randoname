@@ -1,0 +1,4188 @@
+Namsor
+Home
+Features
+Excel / CSV
+API documentation
+Developer tools
+More
+Login
+Register
+API documentation
+Namsor has developed a name checking technology, able to create comprehensive analysis through multiple processing. Our API can classify names by origin, by ethnicity, by residence country, by gender, and supports many alphabets*.
+
+
+Namsor's services
+API version:
+2.1.1
+
+API key:Two side-by-side files.
+
+Please login to access your API key
+API documentation
+Introduction
+Origin from names
+Gender from names
+Name type recognition
+Split full names
+Japanese names
+Chinese names
+Indian names
+Caste Indian Name
+Caste group from first names (optional), last names (optional), states .
+
+Caste Indian Full Name
+Caste group from full names , states .
+
+Religion Indian Name
+Religion from first names (optional), last names (optional), states .
+
+Religion Indian Full Name
+Religion from full names , states .
+
+Subclassification Indian Name
+Indian State or Union territory from first names (optional), last names (optional).
+
+Subclassification Indian Full Name
+Indian State or Union territory from full names .
+
+Phone number format
+Admin
+Introduction
+About
+The base endpoint URL is: https://v2.namsor.com/NamSorAPIv2
+All endpoints require an API Key.
+Never share your API key to ANYONE.
+API Requests and Responses
+All endpoints return JSON containing either an object or a nested array of objects.
+Currently certain NamSor API endpoints use nested object structures in their query body and / or responses, please refer yourself to the corresponding code example.
+Be aware that data in the code examples have been URL encoded into the corresponding ASCII code characters when necessary, for example 谢晓亮 is replaced by %E8%B0%A2%E6%99%93%E4%BA%AE. URLs cannot contain spaces or non-ASCII characters. When making GET requests to the API use URL encoding to convert non-ASCII characters into a format that can be transmitted over the internet.
+Data Privacy
+By default Namsor's machine learning algorithm may improve data evaluation based on the data inputs and does store logs of submitted request. You may change these setting either in your user account or by calling the dedicated API endpoints. All data logs are secured using AES encryption before being stored.
+
+If you wish to disable machine learning based on your submissions, please set learnable to false in the "Enhance privacy" section on the my account page. When set to false for an API key, the data processed using that key will not feed the machine learning algorithm.
+
+If you wish to disable service usage history, please set anonymized to true in the "Enhance privacy" section on the my account page. When set to true for an API key, the data processed using that key will be irreversibly anonymised using SHA encryption. Note that the smart processing for redundant queries will still work even if your data is anonymised.
+
+Authentication
+API Key Creation
+Customer accounts are common to all Namsor group websites. To create an API key visit Namsor or another site of the Namsor group and create an account. Navigate to the account information page to retrieve your API key. Your newly created account comes with 500 free credits that you may use immediately with any of Namsor's tools: API, CSV and Excel file processor or Developer tools.
+
+API Key Installation
+Your API key must be set in the header of your request using the X-API-KEY property. Please refer yourself to the provided code samples for correct key installation.
+
+information
+You must replace your-api-key with your Namsor API key.
+
+Credits
+What are Credits
+We use a credit system to track usage. Each plan comes with a monthly quantity of credits and a price for request that exceed your monthly allowance. The free Basic subscription plan grants you 500 credits but other plans are available in case you have higher requirements. As an example, with 500 credits you can either:
+
+Process 50 names to determine their origins.
+Process 25 names to determine their ethnicities.
+Process 50 names to determine their US race ethncities.
+Process 50 names to determine their countries of residence.
+Process 500 names to determine their genders.
+information
+Admin routes are free.
+
+Repeated Operations Tolerance
+Our API features smart processing and it will not charge for analyzing identical data for up to 20 times. For example if you submit the same full name 5 times in order to infer it's origin then you will only be charged 1 credit.
+
+Soft Limit vs Hard Limit
+In your user account you may set two types of credit usage limits:
+
+A soft limit that will trigger an email notification when reached.
+A hard limit that will trigger an email notification and block the API key when reached.
+Track Usage
+There are two ways to track your credit usage: check the provided graphics in your user account or query the appropriate Admin routes (API Usage, API Usage History and API Usage History Aggregate).
+
+Errors
+The NamSor API uses the following error codes:
+
+401
+Unauthorized
+Missing or incorrect API Key.
+403
+Forbidden
+API Limit Reached or API Key Disabled.
+404
+Not Found
+The specified route could not be found.
+500
+Internal Server Error
+Server error. Try again later.
+Result Explainability
+The Namsor API offers the ability to obtain a detailed explanation of how the artificial intelligence arrived at its results for a given request. By enabling this option, an additional field is included in the API response, providing a Python code explanation of the process followed by the AI.
+
+Important
+Additional Cost: Activating explainability incurs an extra cost of 50 credits per name processed.
+Explanation Format: The returned explanation is in Python code. For optimal use, it is recommended to remove tabs and carriage returns so that the code is usable.
+How to Activate Explainability:
+Contact the Namsor Team: Before using this feature, please contact our team to activate the explainability option on your client account.
+Configure the Request: Add the following header to your API request:
+X-OPTION-EXPLANABILITY: true
+Copy
+By following these steps, each request will now include a detailed explanation of the result, allowing you to gain deep insights into the workings of our artificial intelligence specialized in onomastics.
+
+AI Act Use Case
+The Namsor API can be instrumental in complying with national or supra-national regulations aimed at preventing biased results and discriminatory effects in Artificial Intelligence. Namsor is capable of inferring special categories of personal data from names to estimate the risk of algorithmic biases related to gender, race, cultural/linguistic background, ethnicity, or country of origin.
+
+The European AI Act introduces a new exception regarding “sensitive data” to protect citizens' rights from discrimination that might arise due to bias in AI systems. For the purpose of ensuring bias detection and correction in high-risk AI systems, it permits the processing of special categories of personal data, as a matter of substantial public interest.
+
+Namsor's Explainability Option is designed to provide a closed mathematical formula that includes the entire explanation of name classification (with both training data features and complete model formulas). This can be stored for audit purposes in decision-making AI algorithms.
+
+To protect Namsor's intellectual property, we require specific documentation and a signed NDA before activating this option.
+
+Origin from names
+Namsor helps you find thorough information about the origin of a name by establishing a name's country of origin, the ethnicity, the diaspora and the US race classification. We also provide a corridor evalutation API, to check background information about international interactions.
+
+Name Origin
+Name Origin feature analyzes a first name and/or a last name to identify its country of origin with slightly improved accuracy than the Full Name Origin feature. Adding a first and last name increases the accuracy of the determined origin.
+The feature returns the region of origin, the country of origin, and a list of the top 10 countries of origin, ordered from most likely to least likely. Each country of origin returned is accompanied by a calibrated probability.
+
+Note that the name diaspora feature may be better suited for multicultural countries, such as the United States, Canada, Australia, New-Zealand and other "melting-pots".
+
+POST
+GET
+Description: Returns the most likely country of origin of up to 100 first names and/or last names.
+Precision:Precision gauge
+Cost: 10 credits per name.
+Test: Name Origin feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/originBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their countries of origin.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name, given name or nickname.	
+[{...}].lastName	String	Submitted last name, family name or surname.	
+[{...}].countryOrigin	String	Most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countryOriginAlt	String	Second most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countriesOriginTop	Array	Top 10 most likely countries of origin, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	Country of origin
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].regionOrigin	String	Most likely region of origin.	Regions of origin or residence
+[{...}].topRegionOrigin	String	Most likely region of origin (alternative classification).	Regions of origin or residence
+[{...}].subRegionOrigin	String	Most likely sub-region of origin.	Sub regions of origin or residence
+[{...}].probabilityCalibrated	Number	The calibrated probability that countryOrigin has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that countryOrigin OR countryOriginAlt have been guessed correctly. -1 = still calibrating.	
+Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics for the most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in most likely country of origin (countryOrigin).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in most likely country of origin (countryOrigin).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics for the second most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in second most likely country of origin (countryOriginAlt).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in second most likely country of origin (countryOriginAlt).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Name Origin code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/originBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Keith","lastName":"Haring"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Keith",
+      "lastName": "Haring"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "countryOrigin": "GB",
+            "countryOriginAlt": "IE",
+            "countriesOriginTop": ["GB", "IE", "DE", "NL", "EE", "SE", "DK", "MY", "ID", "KH"],
+            "score": 10.255274142073363,
+            "regionOrigin": "Europe",
+            "topRegionOrigin": "Europe",
+            "subRegionOrigin": "Northern Europe",
+            "probabilityCalibrated": 0.7724670883776785,
+            "probabilityAltCalibrated": 0.8719112661893521
+        }
+    ]
+}
+Copy
+Values ​​returned only if the religious statistics option is enabled X-OPTION-RELIGION-STATS: True.
+
+{
+  religionStats: [
+    { religion: 'Christian', pct: 85.24262131 },
+    { religion: 'Unaffiliated', pct: 14.20710355 },
+    { religion: 'Other', pct: 0.300150075 },
+    { religion: 'Buddhist', pct: 0.050025013 },
+    { religion: 'Folk', pct: 0.050025013 },
+    { religion: 'Hindu', pct: 0.050025013 },
+    { religion: 'Jewish', pct: 0.050025013 },
+    { religion: 'Muslim', pct: 0.050025013 },
+  ],
+  religionStatsAlt: [
+    { religion: 'Christian', pct: 88.97427291753932 },
+    { religion: 'Unaffiliated', pct: 9.78531187532157 },
+    { religion: 'Muslim', pct: 0.6298564872835054 },
+    { religion: 'Other', pct: 0.16200879680269425 },
+    { religion: 'Buddhist', pct: 0.13284624102403442 },
+    { religion: 'Folk', pct: 0.13284624102403442 },
+    { religion: 'Hindu', pct: 0.13284624102403442 },
+    { religion: 'Jewish', pct: 0.050011199980789234 },
+  ],
+}
+Copy
+Full Name Origin
+Full Name Origin feature analyzes an unsplit full name (first name and last name) to identify its country of origin.
+The feature returns the region of origin, the country of origin, and a list of the top 10 countries of origin, ordered from most likely to least likely. Each country of origin returned is accompanied by a calibrated probability.
+
+Note that the name diaspora feature may be better suited for multicultural countries, such as the United States, Canada, Australia, New-Zealand and other "melting-pots".
+
+information
+If the first and last name are clearly identifiable, the Name Origin feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely country of origin of up to 100 unsplit full names.
+Precision:Precision gauge
+Cost: 10 credits per name.
+Test: Full Name Origin feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/originFullBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their countries of origin.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].countryOrigin	String	Most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countryOriginAlt	String	Second most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countriesOriginTop	Array	Top 10 most likely countries of origin, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	Country of origin
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].regionOrigin	String	Most likely region of origin.	Regions of origin or residence
+[{...}].topRegionOrigin	String	Most likely region of origin (alternative classification).	Regions of origin or residence
+[{...}].subRegionOrigin	String	Most likely sub-region of origin.	Sub regions of origin or residence
+[{...}].probabilityCalibrated	Number	The calibrated probability that countryOrigin has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that countryOrigin OR countryOriginAlt have been guessed correctly. -1 = still calibrating.	
+Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics for the most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in most likely country of origin (countryOrigin).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in most likely country of origin (countryOrigin).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics for the second most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in second most likely country of origin (countryOriginAlt).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in second most likely country of origin (countryOriginAlt).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Full Name Origin code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/originFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"Keith Haring"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Keith Haring"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "Keith Haring",
+            "countryOrigin": "GB",
+            "countryOriginAlt": "IE",
+            "countriesOriginTop": ["GB", "IE", "DE", "NL", "DK", "SE", "CH", "EE", "MY", "HK"],
+            "score": 11.240061482140302,
+            "regionOrigin": "Europe",
+            "topRegionOrigin": "Europe",
+            "subRegionOrigin": "Northern Europe",
+            "probabilityCalibrated": 0.8369777938445658,
+            "probabilityAltCalibrated": 0.9297055536113793
+        }
+    ]
+}
+Copy
+Name Diaspora
+Name Diaspora feature analyzes a name to identify the most likely ethnicity or diaspora with slightly improved accuracy than the Full Name Diaspora feature. Adding a first and last name and a country of residence increases the accuracy of the determined diaspora.
+The feature returns the most likely ethnicity or a diaspora and the top 10 most likely ethnicities, ordered from most likely to least likely. Each ethnicity returned is accompanied by a calibrated probability.
+
+POST
+GET
+Description: Returns the most likely ethnicity or diaspora of up to 100 first names (optional) and last names, according to their country of residence.
+Precision:Precision gauge
+Cost: 20 credits per name.
+Test: Name Diaspora feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/diasporaBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Required	Last name, family name, surname.
+[{...}].countryIso2	String	Optional	Country of residence, in ISO 3166-1 alpha-2 format. "US" by default (if no value indicated).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their ethnicities.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].ethnicityAlt	String	Second most likely ethnicity.	Ethnicities or diasporas
+[{...}].ethnicity	String	Most likely ethnicity.	Ethnicities or diasporas
+[{...}].lifted	Boolean	Indicates if the output ethnicity is based on machine learning only, or further lifted as a known fact by a country-specific rule.	
+[{...}].countryIso2	String	Submitted country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].ethnicitiesTop	Array	Top 10 most likely ethnicities, ordered from most likely to least likely.	Ethnicities or diasporas
+[{...}].probabilityCalibrated	Number	The calibrated probability that ethnicity has been guessed correctly. -1 = still calibrating .	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that ethnicity OR ethnicityAlt have been guessed correctly. -1 = still calibrating .	
+Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics in the country of origin of the most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of most likely diaspora (ethnicity).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the most likely diaspora (ethnicity).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics in the country of origin of the second most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of second most likely diaspora (ethnicityAlt).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the second most likely diaspora (ethnicityAlt).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Name Diaspora code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/diasporaBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"0d7d6417-0bbb-4205-951d-b3473f605b56","firstName":"Keith","lastName":"Haring","countryIso2":"US"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "0d7d6417-0bbb-4205-951d-b3473f605b56",
+      "firstName": "Keith",
+      "lastName": "Haring",
+      "countryIso2": "US"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "0d7d6417-0bbb-4205-951d-b3473f605b56",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "score": 8.653234788906794,
+            "ethnicityAlt": "British",
+            "ethnicity": "German",
+            "lifted": false,
+            "countryIso2": "US",
+            "ethnicitiesTop": ["German", "British", "Dutch", "Danish", "Irish", "Norwegian", "Swedish", "Jewish", "NativeHawaiian", "Austrian"],
+            "probabilityCalibrated": 0.5197497794419499,
+            "probabilityAltCalibrated": 0.5197497794419499
+        }
+    ]
+}
+Copy
+Values ​​returned only if the religious statistics option is enabled X-OPTION-RELIGION-STATS: True.
+
+{
+  religionStats: [
+    { religion: 'Christian', pct: 68.7 },
+    { religion: 'Unaffiliated', pct: 24.7 },
+    { religion: 'Muslim', pct: 5.8 },
+    { religion: 'Buddhist', pct: 0.3 },
+    { religion: 'Jewish', pct: 0.3 },
+    { religion: 'Other', pct: 0.1 },
+    { religion: 'Folk', pct: 0.05 },
+    { religion: 'Hindu', pct: 0.05 },
+  ],
+  religionStatsAlt: [
+    { religion: 'Christian', pct: 68.7 },
+    { religion: 'Unaffiliated', pct: 24.7 },
+    { religion: 'Muslim', pct: 5.8 },
+    { religion: 'Buddhist', pct: 0.3 },
+    { religion: 'Jewish', pct: 0.3 },
+    { religion: 'Other', pct: 0.1 },
+    { religion: 'Folk', pct: 0.05 },
+    { religion: 'Hindu', pct: 0.05 },
+  ],
+}
+Copy
+Full Name Diaspora
+Full Name Diaspora feature analyzes an unsplit full name (first name and last name) to identify the most likely ethnicity or diaspora.
+The feature returns the most likely ethnicity or a diaspora and the top 10 most likely ethnicities, ordered from most likely to least likely. Each ethnicity returned is accompanied by a calibrated probability.
+
+information
+If the first and last name are clearly identifiable, the Name Diaspora feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely ethnicity or diaspora of up to 100 unsplit full names, according to their country of residence.
+Precision:Precision gauge
+Cost: 20 credits per name.
+Test: Full Name Diaspora feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/diasporaFullBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal full names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+[{...}].countryIso2	String	Required	Country of residence, in ISO 3166-1 alpha-2 format. "US" by default (if no value indicated).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their ethnicities.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].ethnicityAlt	String	Second most likely ethnicity.	Ethnicities or diasporas
+[{...}].ethnicity	String	Most likely ethnicity.	Ethnicities or diasporas
+[{...}].lifted	Boolean	Indicates if the output ethnicity is based on machine learning only, or further lifted as a known fact by a country-specific rule.	
+[{...}].countryIso2	String	Submitted country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].ethnicitiesTop	Array	Top 10 most likely ethnicities, ordered from most likely to least likely.	Ethnicities or diasporas
+[{...}].probabilityCalibrated	Number	The calibrated probability that ethnicity has been guessed correctly. -1 = still calibrating .	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that ethnicity OR ethnicityAlt have been guessed correctly. -1 = still calibrating .	
+Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics in the country of origin of the most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of most likely diaspora (ethnicity).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the most likely diaspora (ethnicity).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics in the country of origin of the second most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of second most likely diaspora (ethnicityAlt).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the second most likely diaspora (ethnicityAlt).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Full Name Diaspora code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/diasporaFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"0d7d6417-0bbb-4205-951d-b3473f605b56","name":"Keith Haring","countryIso2":"US"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "0d7d6417-0bbb-4205-951d-b3473f605b56",
+      "name": "Keith Haring",
+      "countryIso2": "US"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "0d7d6417-0bbb-4205-951d-b3473f605b56",
+            "name": "Keith Haring",
+            "score": 1.9177978014400305,
+            "ethnicityAlt": "British",
+            "ethnicity": "German",
+            "lifted": false,
+            "countryIso2": "US",
+            "ethnicitiesTop": ["German", "British", "Dutch", "Irish", "Norwegian", "Danish", "Swedish", "Swiss", "Austrian", "NativeHawaiian"],
+            "probabilityCalibrated": 0.29971840123154375,
+            "probabilityAltCalibrated": 0.35544175296700403
+        }
+    ]
+}
+Copy
+Name US Race
+Name US Race feature analyzes a first name and/or a last name to identify the most likely US race with slightly improved accuracy than the Full Name US Race feature. Adding a first and last name and a country of residence increases the accuracy of the determined US race.
+The feature returns the most likely US race ethnicity and a list of the most likely US race ethnicities, sorted from most likely to least likely. Each race returned is accompanied by a calibrated probability.
+
+US race is a categorization from United States Census Taxonomy
+
+POST
+GET
+Description: Returns the most likely US race of up to 100 first names and/or last names.
+Precision:Precision gauge
+Cost: 10 credits per name.
+Test: Name US Race feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/usRaceEthnicityBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-USRACEETHNICITY-TAXONOMY	USRACEETHNICITY-6CLASSES	Optional	Enumerators for the returned 'race' ethnicity. Do not specify the property of the http request to obtain 4 classes (W_NL, HL, A, B_NL), USRACEETHNICITY-6CLASSES will return 6 classes (W_NL, HL, A, B_NL, AI_AN, PI). For international names (non US resident) please choose 4 classes.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+[{...}].countryIso2	String	Optional	Country of residence, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their race.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].raceEthnicityAlt	String	Second most likely race (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].raceEthnicity	String	Most likely race (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].raceEthnicitiesTop	Array	Most likely race, sorted from most likely to least likely (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].probabilityCalibrated	Number	The calibrated probability that raceEthnicity has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that raceEthnicity OR raceEthnicityAlt have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Name US Race code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/usRaceEthnicityBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"85dd5f48-b9e1-4019-88ce-ccc7e56b763f","firstName":"Keith","lastName":"Haring","countryIso2":"US"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "85dd5f48-b9e1-4019-88ce-ccc7e56b763f",
+      "firstName": "Keith",
+      "lastName": "Haring",
+      "countryIso2": "US"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "85dd5f48-b9e1-4019-88ce-ccc7e56b763f",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "raceEthnicityAlt": "B_NL",
+            "raceEthnicity": "W_NL",
+            "score": 3.9546190943560813,
+            "raceEthnicitiesTop": ["W_NL", "B_NL", "A", "HL"],
+            "probabilityCalibrated": 0.619185913005526,
+            "probabilityAltCalibrated": 0.7534347105665851
+        }
+    ]
+}
+Copy
+Name US Race ZIP
+Name US Race ZIP feature analyzes a first name and/or a last name to identify the most likely US race with improved accuracy than the basic feature Name US Race. Adding a first and last name and a country of residence increases the accuracy of the determined US race.
+The feature returns the most likely US race ethnicity and a list of the most likely US race ethnicities, sorted from most likely to least likely. Each race returned is accompanied by a calibrated probability.
+
+US race is a categorization from United States Census Taxonomy
+
+POST
+GET
+Description: Returns the most likely US race of up to 100 first names and/or last names using their ZIP code.
+Precision:Precision gauge
+Cost: 10 credits per name.
+Test: Name US Race ZIP feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/usZipRaceEthnicityBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-USRACEETHNICITY-TAXONOMY	USRACEETHNICITY-6CLASSES	Optional	Enumerators for the returned 'race' ethnicity. Do not specify the property of the http request to obtain 4 classes (W_NL, HL, A, B_NL), USRACEETHNICITY-6CLASSES will return 6 classes (W_NL, HL, A, B_NL, AI_AN, PI). For international names (non US resident) please choose 4 classes.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names with their country of residence and postal code.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+[{...}].countryIso2	String	Optional	Country of residence, in ISO 3166-1 alpha-2 format.
+[{...}].zipCode	String	Required	Postal code (5-digit) of residence used by the United States Postal Service (USPS).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their race.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].raceEthnicityAlt	String	Second most likely race (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].raceEthnicity	String	Most likely race (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].raceEthnicitiesTop	Array	Most likely race, sorted from most likely to least likely (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].probabilityCalibrated	Number	The calibrated probability that raceEthnicity has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that raceEthnicity OR raceEthnicityAlt have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Name US Race ZIP code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/usZipRaceEthnicityBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"728767f9-c5b2-4ed3-a071-828077f16552","firstName":"Keith","lastName":"Haring","countryIso2":"US","zipCode":"10019"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "728767f9-c5b2-4ed3-a071-828077f16552",
+      "firstName": "Keith",
+      "lastName": "Haring",
+      "countryIso2": "US",
+      "zipCode": "10019"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "728767f9-c5b2-4ed3-a071-828077f16552",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "raceEthnicityAlt": "B_NL",
+            "raceEthnicity": "W_NL",
+            "score": 3.9546190943560813,
+            "raceEthnicitiesTop": ["W_NL", "B_NL", "A", "HL"],
+            "probabilityCalibrated": 0.619185913005526,
+            "probabilityAltCalibrated": 0.7534347105665851
+        }
+    ]
+}
+Copy
+Full Name US Race
+Full Name US Race feature analyzes an unsplit full name (first name and last name) to identify the most likely US race.
+The feature returns the most likely US race ethnicity and a list of the most likely US race ethnicities, sorted from most likely to least likely. Each race returned is accompanied by a calibrated probability.
+
+US race is a categorization from United States Census Taxonomy
+
+information
+If the first and last name are clearly identifiable, the Name US Race feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely US race of up to 100 unsplit full names.
+Precision:Precision gauge
+Cost: 10 credits per name.
+Test: Full Name US Race feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/usRaceEthnicityFullBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-USRACEETHNICITY-TAXONOMY	USRACEETHNICITY-6CLASSES	Optional	Enumerators for the returned 'race' ethnicity. Do not specify the property of the http request to obtain 4 classes (W_NL, HL, A, B_NL), USRACEETHNICITY-6CLASSES will return 6 classes (W_NL, HL, A, B_NL, AI_AN, PI). For international names (non US resident) please choose 4 classes.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal full names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+[{...}].countryIso2	String	Optional	Country of residence, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their race.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].raceEthnicityAlt	String	Second most likely race (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].raceEthnicity	String	Most likely race (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].raceEthnicitiesTop	Array	Most likely race, sorted from most likely to least likely (US race categorization from US Census Taxonomy).	U.S. race ethnicities
+[{...}].probabilityCalibrated	Number	The calibrated probability that raceEthnicity has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that raceEthnicity OR raceEthnicityAlt have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Full Name US Race code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/usRaceEthnicityFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"85dd5f48-b9e1-4019-88ce-ccc7e56b763f","name":"Keith Haring","countryIso2":"US"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "85dd5f48-b9e1-4019-88ce-ccc7e56b763f",
+      "name": "Keith Haring",
+      "countryIso2": "US"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "85dd5f48-b9e1-4019-88ce-ccc7e56b763f",
+            "name": "Keith Haring",
+            "raceEthnicityAlt": "B_NL",
+            "raceEthnicity": "W_NL",
+            "score": 6.493299531249249,
+            "raceEthnicitiesTop": ["W_NL", "B_NL", "A", "HL"],
+            "probabilityCalibrated": 0.7239234645232184,
+            "probabilityAltCalibrated": 0.8814496032861949
+        }
+    ]
+}
+Copy
+Name Country
+Name Country feature analyzes a first name and/or a last name to identify its country of residence with slightly improved accuracy than the Full Name Country feature.
+The feature returns the region of residence, the country of residence, and a list of the top 10 countries of residence, ordered from most likely to least likely. Each country of residence returned is accompanied by a calibrated probability.
+
+POST
+GET
+Description: Returns the most likely country of residence of up to 100 first names and/or last names.
+Precision:Precision gauge
+Cost: 10 credits per name.
+Test: Name Country feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/countryFnLnBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their countries of residence.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].country	String	Most likely country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].countryAlt	String	Second most likely country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].region	String	Most likely region of residence.	Regions of origin or residence
+[{...}].topRegion	String	Most likely region of residence (alternative classification).	Regions of origin or residence
+[{...}].subRegion	String	Most likely sub-region of residence.	Sub regions of origin or residence
+[{...}].countriesTop	Array	Top 10 most likely countries of residence, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	
+[{...}].probabilityCalibrated	Number	The calibrated probability that country has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that country OR countryAlt have been guessed correctly. -1 = still calibrating.	
+Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics for the most likely country of residence. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in most likely country of residence (country).	Religions
+[{...}].pct	Number	Percentage of population practicing that religion in the country of most likely residence (country).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics for the second most likely country of residence. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in second most likely country of residence (countryAlt).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in second most likely country of residence (countryAlt).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Name Country code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/countryFnLnBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"9a3283bd-4efb-4b7b-906c-e3f3c03ea6a4","firstName":"Keith","lastName":"Haring"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "9a3283bd-4efb-4b7b-906c-e3f3c03ea6a4",
+      "firstName": "Keith",
+      "lastName": "Haring"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "9a3283bd-4efb-4b7b-906c-e3f3c03ea6a4",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "score": 1.0276301745383112,
+            "country": "AU",
+            "countryAlt": "GB",
+            "region": "Oceania",
+            "topRegion": "Oceania",
+            "subRegion": "Australia and New Zealand",
+            "countriesTop": ["AU", "GB", "US", "CA", "NZ", "TT", "SG", "JM", "IE", "DE"],
+            "probabilityCalibrated": 0.2748899815464943,
+            "probabilityAltCalibrated": 0.3641355716648853
+        }
+    ]
+}
+Copy
+Full Name Country
+Full Name Country feature analyzes an unsplit full name (first name and last name) to identify its country of residence.
+The feature returns the region of residence, the country of residence, and a list of the top 10 countries of residence, ordered from most likely to least likely. Each country of residence returned is accompanied by a calibrated probability.
+
+information
+If the first and last name are clearly identifiable, the Name Country feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely country of residence of up to 100 unsplit full names.
+Precision:Precision gauge
+Cost: 10 credits per name.
+Test: Full Name Country feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/countryBatch
+Copy
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their countries of residence.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].country	String	Most likely country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].countryAlt	String	Second most likely country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].region	String	Most likely region of residence.	Regions of origin or residence
+[{...}].topRegion	String	Most likely region of residence (alternative classification).	Regions of origin or residence
+[{...}].subRegion	String	Most likely sub-region of residence.	Sub regions of origin or residence
+[{...}].countriesTop	Array	Top 10 most likely countries of residence, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	
+[{...}].probabilityCalibrated	Number	The calibrated probability that country has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that country OR countryAlt have been guessed correctly. -1 = still calibrating.	
+Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics for the most likely country of residence. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in most likely country of residence (country).	Religions
+[{...}].pct	Number	Percentage of population practicing that religion in the country of most likely residence (country).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics for the second most likely country of residence. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in second most likely country of residence (countryAlt).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in second most likely country of residence (countryAlt).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Full Name Country code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/countryBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"9a3283bd-4efb-4b7b-906c-e3f3c03ea6a4","name":"Keith Haring"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "9a3283bd-4efb-4b7b-906c-e3f3c03ea6a4",
+      "name": "Keith Haring"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "9a3283bd-4efb-4b7b-906c-e3f3c03ea6a4",
+            "name": "Keith Haring",
+            "score": 2.051795198803658,
+            "country": "GB",
+            "countryAlt": "NZ",
+            "region": "Europe",
+            "topRegion": "Europe",
+            "subRegion": "Northern Europe",
+            "countriesTop": ["GB", "NZ", "US", "AU", "IE", "CA", "JM", "TT", "SG", "DE"],
+            "probabilityCalibrated": 0.22823337808846267,
+            "probabilityAltCalibrated": 0.24281407862260063
+        }
+    ]
+}
+Copy
+Values ​​returned only if the religious statistics option is enabled X-OPTION-RELIGION-STATS: True.
+
+{
+  religionStats: [
+    { religion: 'Christian', pct: 78.3 },
+    { religion: 'Unaffiliated', pct: 16.4 },
+    { religion: 'Jewish', pct: 1.8 },
+    { religion: 'Buddhist', pct: 1.2 },
+    { religion: 'Muslim', pct: 0.9 },
+    { religion: 'Hindu', pct: 0.6 },
+    { religion: 'Other', pct: 0.6 },
+    { religion: 'Folk', pct: 0.2 },
+  ],
+  religionStatsAlt: [
+    { religion: 'Christian', pct: 78.3007843079025 },
+    { religion: 'Unaffiliated', pct: 16.39975226849653 },
+    { religion: 'Jewish', pct: 1.799802305332493 },
+    { religion: 'Buddhist', pct: 1.1998700873301702 },
+    { religion: 'Muslim', pct: 0.8999039783290091 },
+    { religion: 'Other', pct: 0.5999661259551334 },
+    { religion: 'Hindu', pct: 0.5999378693278477 },
+    { religion: 'Folk', pct: 0.1999830573262992 },
+  ],
+}
+Copy
+Names Corridor
+Name Corridor feature analyzes two person's first name, last name, and country of residence to return a comprehensive report of the interaction.
+
+POST
+GET
+Description: Returns complete analysis of up to 100 cross border interactions between two names using their geographic context. The sender is the one who initiated the interaction (from), while the receiver is the one intended to receive the interaction (to).
+Cost: 50 credits per name.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/corridorBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+corridorFromTo	Array of objects	Required	A list of name pairs, with country code (nameFrom -> nameTo)..
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstLastNameGeoFrom	Object	Required	.
+{...}.id	String	Optional	Unique identifier.
+{...}.firstName	String	Required	First name (or given name) of the sender.
+{...}.lastName	String	Required	Last name (or family name) of the sender.
+{...}.countryIso2	String	Required	Country of origin of the sender, in ISO 3166-1 alpha-2 format.
+[{...}].firstLastNameGeoTo	Object	Required	.
+{...}.id	String	Optional	Unique identifier.
+{...}.firstName	String	Required	First name (or given name) of the receiver.
+{...}.lastName	String	Required	Last name (or family name) of the receiver.
+{...}.countryIso2	String	Required	Country of origin of the receiver, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+corridorFromTo	Array of objects	A list of classified name pairs..	
+[{...}].id	String	Unique identifier.	
+[{...}].firstLastNameGeoFromGender	Object	Gender data for the sender name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Unique identifier.	
+{...}.firstName	String	Submitted first name (or given name) of the sender.	
+{...}.lastName	String	Submitted last name (or family name) of the sender.	
+{...}.likelyGender	String	Most likely gender.	Genders
+{...}.genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+{...}.score	Number	Higher implies a more reliable result, but score is not normalized. Use probabilityCalibrated if available.	
+{...}.probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+[{...}].firstLastNameGeoToGender	Object	Gender data for the receiver name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Unique identifier.	
+{...}.firstName	String	Submitted first name (or given name) of the receiver.	
+{...}.lastName	String	Submitted last name (or family name) of the receiver.	
+{...}.likelyGender	String	Most likely gender.	Genders
+{...}.genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+{...}.score	Number	Higher implies a more reliable result, but score is not normalized. Use probabilityCalibrated if available.	
+{...}.probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+[{...}].firstLastNameGeoFromOrigin	Object	Origin data for the sender name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Unique identifier.	
+{...}.firstName	String	Submitted first name (or given name) of the sender.	
+{...}.lastName	String	Submitted last name (or family name) of the sender.	
+{...}.countryOrigin	String	Most likely country of origin of the sender, in ISO 3166-1 alpha-2 format.	Country of origin
+{...}.countryOriginAlt	String	Second most likely country of origin of the sender, in ISO 3166-1 alpha-2 format.	Country of origin
+{...}.countriesOriginTop	Array	Top 10 most likely countries of origin of the sender, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	Country of origin
+{...}.score	Number	Higher implies a more reliable result, but score is not normalized. Use probabilityCalibrated if available.	
+{...}.regionOrigin	String	Most likely region of origin of the sender.	Regions of origin or residence
+{...}.topRegionOrigin	String	Most likely region of origin of the sender (alternative classification).	Regions of origin or residence
+{...}.subRegionOrigin	String	Most likely sub-region of origin of the sender.	Sub regions of origin or residence
+{...}.probabilityCalibrated	Number	The calibrated probability for countryOrigin to have been guessed correctly. -1 = still calibrating.	
+{...}.probabilityAltCalibrated	Number	The calibrated probability for countryOrigin OR countryOriginAlt to have been guessed correctly. -1 = still calibrating.	
+[{...}].firstLastNameGeoToOrigin	Object	Origin data for the receiver name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Unique identifier.	
+{...}.firstName	String	Submitted first name (or given name) of the receiver.	
+{...}.lastName	String	Submitted last name (or family name) of the receiver.	
+{...}.countryOrigin	String	Most likely country of origin of the receiver, in ISO 3166-1 alpha-2 format.	Country of origin
+{...}.countryOriginAlt	String	Second most likely country of origin of the receiver, in ISO 3166-1 alpha-2 format.	Country of origin
+{...}.countriesOriginTop	Array	Top 10 most likely countries of origin of the receiver, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	Country of origin
+{...}.score	Number	Higher implies a more reliable result, but score is not normalized. Use probabilityCalibrated if available.	
+{...}.regionOrigin	String	Most likely region of origin.	Regions of origin or residence
+{...}.topRegionOrigin	String	Most likely region of origin of the receiver (alternative classification).	Regions of origin or residence
+{...}.subRegionOrigin	String	Most likely sub-region of origin of the receiver.	Sub regions of origin or residence
+{...}.probabilityCalibrated	Number	The calibrated probability for countryOrigin to have been guessed correctly. -1 = still calibrating.	
+{...}.probabilityAltCalibrated	Number	The calibrated probability for countryOrigin OR countryOriginAlt to have been guessed correctly. -1 = still calibrating.	
+[{...}].firstLastNameGeoFromDiaspora	Object	Diaspora data for the sender name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Unique identifier.	
+{...}.firstName	String	Submitted first name (or given name) of the sender.	
+{...}.lastName	String	Submitted last name (or family name) of the sender.	
+{...}.score	Number	Higher implies a more reliable result, but score is not normalized. Use probabilityCalibrated if available.	
+{...}.ethnicityAlt	String	Second most likely ethnicity of the sender.	Ethnicities or diasporas
+{...}.ethnicity	String	Most likely ethnicity of the sender.	Ethnicities or diasporas
+{...}.lifted	Boolean	Indicates if the output ethnicity is based on machine learning only, or further lifted as a known fact by a country-specific rule.	
+{...}.countryIso2	String	Submitted country of origin of the sender, in ISO 3166-1 alpha-2 format.	Country of residence
+{...}.ethnicitiesTop	Array	Top 10 most likely ethnicities of the sender, ordered from most likely to least likely.	Ethnicities or diasporas
+[{...}].firstLastNameGeoToDiaspora	Object	Diaspora data for the receiver name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Unique identifier.	
+{...}.firstName	String	Submitted first name (or given name) of the receiver.	
+{...}.lastName	String	Submitted last name (or family name) of the receiver.	
+{...}.score	Number	Higher implies a more reliable result, but score is not normalized. Use probabilityCalibrated if available.	
+{...}.ethnicityAlt	String	Second most likely ethnicity of the receiver.	Ethnicities or diasporas
+{...}.ethnicity	String	Most likely ethnicity of the receiver.	Ethnicities or diasporas
+{...}.lifted	Boolean	Indicates if the output ethnicity is based on machine learning only, or further lifted as a known fact by a country-specific rule.	
+{...}.countryIso2	String	Submitted country of origin of the receiver, in ISO 3166-1 alpha-2 format.	Country of residence
+{...}.ethnicitiesTop	Array	Top 10 most likely ethnicities of the receiver, ordered from most likely to least likely.	Ethnicities or diasporas
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Names Corridor code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/corridorBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"corridorFromTo":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstLastNameGeoFrom":{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Ada","lastName":"Lovelace","countryIso2":"GB"},"firstLastNameGeoTo":{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Nicolas","lastName":"Tesla","countryIso2":"US"}}]}'
+Copy
+Body parameter:
+
+{
+  "corridorFromTo": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstLastNameGeoFrom": {
+        "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+        "firstName": "Ada",
+        "lastName": "Lovelace",
+        "countryIso2": "GB"
+      },
+      "firstLastNameGeoTo": {
+        "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+        "firstName": "Nicolas",
+        "lastName": "Tesla",
+        "countryIso2": "US"
+      }
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "corridorFromTo": [
+        {
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstLastNameGeoFromGender": {
+                "script": "LATIN",
+                "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c43",
+                "firstName": "Ada",
+                "lastName": "Lovelace",
+                "likelyGender": "female",
+                "genderScale": 0.9667738179638148,
+                "score": 20.98847600479561,
+                "probabilityCalibrated": 0.9833869089819074
+            },
+            "firstLastNameGeoToGender": {
+                "script": "LATIN",
+                "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c41",
+                "firstName": "Nicolas",
+                "lastName": "Tesla",
+                "likelyGender": "male",
+                "genderScale": -0.9915797101926913,
+                "score": 30.224379416275056,
+                "probabilityCalibrated": 0.9957898550963457
+            },
+            "firstLastNameGeoFromOrigin": {
+                "script": "LATIN",
+                "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c43",
+                "firstName": "Ada",
+                "lastName": "Lovelace",
+                "countryOrigin": "IE",
+                "countryOriginAlt": "GB",
+                "countriesOriginTop": ["IE", "GB"],
+                "score": 2.568304424015469,
+                "regionOrigin": "Europe",
+                "topRegionOrigin": "Europe",
+                "subRegionOrigin": "Northern Europe",
+                "probabilityCalibrated": 0.45562779224760414,
+                "probabilityAltCalibrated": 0.6327518248452595
+            },
+            "firstLastNameGeoToOrigin": {
+                "script": "LATIN",
+                "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c41",
+                "firstName": "Nicolas",
+                "lastName": "Tesla",
+                "countryOrigin": "FR",
+                "countryOriginAlt": "GR",
+                "countriesOriginTop": ["FR", "GR"],
+                "score": 1.454789764445522,
+                "regionOrigin": "Europe",
+                "topRegionOrigin": "Europe",
+                "subRegionOrigin": "Western Europe",
+                "probabilityCalibrated": 0.44774495967210787,
+                "probabilityAltCalibrated": 0.4771001024099368
+            },
+            "firstLastNameGeoFromDiaspora": {
+                "script": "LATIN",
+                "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c43",
+                "firstName": "Ada",
+                "lastName": "Lovelace",
+                "score": 32.41686703300403,
+                "ethnicityAlt": "TrinidadTobago",
+                "ethnicity": "British",
+                "lifted": false,
+                "countryIso2": "GB",
+                "ethnicitiesTop": ["British", "TrinidadTobago"]
+            },
+            "firstLastNameGeoToDiaspora": {
+                "script": "LATIN",
+                "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c41",
+                "firstName": "Nicolas",
+                "lastName": "Tesla",
+                "score": 1.1421954239282939,
+                "ethnicityAlt": "Jewish",
+                "ethnicity": "Italian",
+                "lifted": false,
+                "countryIso2": "US",
+                "ethnicitiesTop": ["Italian", "Jewish"]
+            }
+        }
+    ]
+}
+Copy
+Gender from names
+Namsor's name checking API can help you determine the probability of a person being male or female based on their name. We offer many processing options for gender determination, the name can either be provided: as a full name, as a first name and a last name. In addition to the name you may specify the country of origin to improve accuracy. Our API also supports Chinese names, Japanese names and a large number of additional alphabets*.
+
+Genderize Name
+Genderize Name feature analyzes a first name and a last name (optional) to identify its most likely gender with slightly improved accuracy than the Genderize Full Name feature. Adding a first and last name increases the accuracy of the determined gender.
+The feature returns the most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a unisex name.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 first names and last names (optional).
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Required	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"b590b04c-da23-4f2f-a334-aee384ee420a","firstName":"Keith","lastName":"Haring"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "b590b04c-da23-4f2f-a334-aee384ee420a",
+      "firstName": "Keith",
+      "lastName": "Haring"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "b590b04c-da23-4f2f-a334-aee384ee420a",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "likelyGender": "male",
+            "genderScale": -0.8126510374561324,
+            "score": 12.516892456249645,
+            "probabilityCalibrated": 0.9063255187280662
+        }
+    ]
+}
+Copy
+Genderize Name Geo
+Genderize Name Geo feature analyzes a first name and a last name (optional) based on a country of residence to identify its most likely gender with improved accuracy than the basic feature Genderize Name. Adding a first and last name increases the accuracy of the determined gender.
+The feature returns the most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a unisex name.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 first names and last names (optional) using their geographic context.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Name Geo feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderGeoBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Required	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+[{...}].countryIso2	String	Required	Most likely country of residence, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Name Geo code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderGeoBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"27fb45db-eddf-40d0-95c1-de9978a166b0","firstName":"Keith","lastName":"Haring","countryIso2":"US"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "27fb45db-eddf-40d0-95c1-de9978a166b0",
+      "firstName": "Keith",
+      "lastName": "Haring",
+      "countryIso2": "US"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "27fb45db-eddf-40d0-95c1-de9978a166b0",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "likelyGender": "male",
+            "genderScale": -0.8889514731555574,
+            "score": 16.03594419932244,
+            "probabilityCalibrated": 0.9444757365777787
+        }
+    ]
+}
+Copy
+Genderize Full Name
+Genderize Full Name feature analyzes an unsplit full name (first name and last name) to identify its most likely gender.
+The feature returns the most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a unisex name.
+
+information
+If the first and last name are clearly identifiable, the Genderize Name feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 unsplit full names.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Full Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderFullBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal full names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Full Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"0f472330-11a9-49ad-a0f5-bcac90a3f6bf","name":"Keith Haring"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "0f472330-11a9-49ad-a0f5-bcac90a3f6bf",
+      "name": "Keith Haring"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "0f472330-11a9-49ad-a0f5-bcac90a3f6bf",
+            "name": "Keith Haring",
+            "likelyGender": "male",
+            "genderScale": -0.8744219712791637,
+            "score": 11.2727995452283,
+            "probabilityCalibrated": 0.9372109856395818
+        }
+    ]
+}
+Copy
+Genderize Full Name Geo
+Genderize Full Name Geo feature analyzes an unsplit full name (first name and last name) based on a country of residence, to identify its most likely gender with improved accuracy than the basic feature Genderize Full Name. The feature returns most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a unisex name.
+
+information
+If the first and last name are clearly identifiable, the Genderize Name Geo feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 unsplit full names, according to their geographic context.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Full Name Geo feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderFullGeoBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal full names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+[{...}].countryIso2	String	Required	Country of residence, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Full Name Geo code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderFullGeoBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"3a2d203a-a6a4-42f9-acd1-1b5c56c7d39f","name":"Keith Haring","countryIso2":"US"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "3a2d203a-a6a4-42f9-acd1-1b5c56c7d39f",
+      "name": "Keith Haring",
+      "countryIso2": "US"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "3a2d203a-a6a4-42f9-acd1-1b5c56c7d39f",
+            "name": "Keith Haring",
+            "likelyGender": "male",
+            "genderScale": -0.8716298606148474,
+            "score": 11.225679376737641,
+            "probabilityCalibrated": 0.9358149303074237
+        }
+    ]
+}
+Copy
+Name Type Recognition
+Namsor provides a specialized proper name type determination API, it is trained to analyse proper names and infer if they are personal names (anthroponym), a geographic name (toponym) or brand names. Differentiate individuals from companies base on their name in order to automate processes, evaluate references to names or leverage deeper insight into an audience. To yield improved results you may indicate the name's country of origin.
+
+Name Type
+Name Type feature analyzes a proper noun to determine if it's the name of a person (anthroponym), a geographic name (toponym), an alias of a person (pseudonym) or the name of a brand. We recommend that you submit the entire name (full name) if applicable.
+
+POST
+GET
+Description: Returns the type of up to 100 submitted proper nouns. Ex: John Smith = personal name, Namsor = brand name, Cherbourg en Cotentin = toponym, Batman = pseudonym.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Name Type feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/nameTypeBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+properNouns	Array of objects	Required	A list of proper names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	A proper noun (person, brand, etc.).
+Response
+Name	Type	Description	Enumerators
+properNouns	Array of objects	A list of commonTypeized names..	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted proper noun.	
+[{...}].commonType	String	Most likely type of the proper noun.	Name types
+[{...}].commonTypeAlt	String	Second most likely type of the proper noun.	Name types
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Name Type code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/nameTypeBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"properNouns":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"Zippo"}]}'
+Copy
+Body parameter:
+
+{
+  "properNouns": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Zippo"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "properNouns": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "Zippo",
+            "commonType": "brand-name",
+            "commonTypeAlt": "toponym",
+            "score": 7.717552576402805
+        }
+    ]
+}
+Copy
+Name Type Geo
+Name Type Geo feature analyzes a proper noun based on a local context to determine if it's the name of a person (anthroponym), a geographic name (toponym), an alias of a person (pseudonym) or the name of a brand, with improved accuracy than the basic feature Name Type.
+
+POST
+GET
+Description: Returns the type of up to 100 submitted proper nouns using their geographic context. Ex: John Smith = personal name, Namsor = brand name, Cherbourg en Cotentin = toponym, Batman = pseudonym.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Name Type Geo feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/nameTypeGeoBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+properNouns	Array of objects	Required	A list of proper names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	A proper noun (person, brand, etc.).
+[{...}].countryIso2	String	Required	Most likely country of origin, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+properNouns	Array of objects	A list of commonTypeized names..	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted proper noun.	
+[{...}].commonType	String	Most likely type of the proper noun.	Name types
+[{...}].commonTypeAlt	String	Second most likely type of the proper noun.	Name types
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Name Type Geo code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/nameTypeGeoBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"properNouns":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"Edi Gathegi","countryIso2":"KE"}]}'
+Copy
+Body parameter:
+
+{
+  "properNouns": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Edi Gathegi",
+      "countryIso2": "KE"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "properNouns": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "Edi Gathegi",
+            "commonType": "anthroponym",
+            "commonTypeAlt": "brand-name",
+            "score": 18.579081911201673
+        }
+    ]
+}
+Copy
+Split names
+Namsor's software offers a name separation API. We are able to take in a full name, and split it into a first name and last name structure. Our API also supports Chinese names, in Pinyin or Mandarin Chinese, and Japanese names written in Kanji characters.
+
+Split Name
+Split Name feature identifies the first name and the last name from an unsplit full name. The Split Name Geo feature helps improve accuracy when splitting the full name by adding a country of residence.
+
+POST
+GET
+Description: Returns the most likely first name and last name structure of up to 100 full names.
+Cost: 1 credit per name.
+Test: Split Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/parseNameBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of unsplit full names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Full name (first name and last name).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names separated into first name and last name structure.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].nameParserType	String	Most likely structure of the name.	Name structures
+[{...}].nameParserTypeAlt	String	Second most likely structure of the name.	Name structures
+[{...}].firstLastName	Object	Split name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Provided unique identifier.	
+{...}.firstName	String	First name (or given name).	
+{...}.lastName	String	Last name (or family name).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Split Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/parseNameBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"John Smith"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "John Smith"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "John Smith",
+            "nameParserType": "FN1LN1",
+            "nameParserTypeAlt": null,
+            "firstLastName": {
+                "script": null,
+                "id": null,
+                "firstName": "John",
+                "lastName": "Smith"
+            },
+            "score": 23.31368511252333
+        }
+    ]
+}
+Copy
+Split Name Geo
+Split Name Geo feature processes an unsplit full name with a country of residence to identify the first name and the last name, with improved accuracy than the basic feature Split Name.
+
+POST
+GET
+Description: Returns the most likely first name and last name structure of up to 100 full names using their geographic context.
+Cost: 1 credit per name.
+Test: Split Name Geo feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/parseNameGeoBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of unsplit full names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Full name (first name and last name).
+[{...}].countryIso2	String	Required	Most likely country of origin, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names separated into first name and last name structure.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].nameParserType	String	Most likely structure of the name.	Name structures
+[{...}].nameParserTypeAlt	String	Second most likely structure of the name.	Name structures
+[{...}].firstLastName	Object	Split name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Provided unique identifier.	
+{...}.firstName	String	First name (or given name).	
+{...}.lastName	String	Last name (or family name).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Split Name Geo code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/parseNameGeoBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"Ricardo Darín","countryIso2":"AR"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Ricardo Darín",
+      "countryIso2": "AR"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "Ricardo Darín",
+            "nameParserType": "FN1LN1",
+            "nameParserTypeAlt": "FN1LN2",
+            "firstLastName": {
+                "script": null,
+                "id": null,
+                "firstName": "Ricardo",
+                "lastName": "Darín"
+            },
+            "score": 3.447624982163207
+        }
+    ]
+}
+Copy
+Japanese names
+Namsor provides a specialized name processing API dedicated to analysing names in the Japanese language. We have developed a name converter, focused on Japanese names, to help you find the best transcriptions possible. With our API, you can convert Japanese names both ways between Kanji and English. You can evaluate the quality of a transcriptions between a name in Kanji and a name in Latin characters. It is also possible to split Japansese full names, in either Kanji or Latin characters, into a first name and a last name as well as establish the gender of a name.
+
+Translate Japanese Name To Latin
+Translate Japanese Name To Latin feature converts a Japanese given name or a Japanese surname (or both for more precision) written in Kanji characters, into Latin alphabet. The conversion of a Japanese name written in Kanji into Latin alphabet is called romanization. Several conversions for the same name are possible. This is why the feature returns a list of converted names, accompanied by a calibrated probability and sorted from most likely to least likely.
+
+POST
+GET
+Description: Returns the most likely latin transcriptions for up to 100 Japanese given names and/or surnames in Kanji characters.
+Cost: 1 credit per name.
+Test: Translate Japanese Name To Latin feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameLatinCandidatesBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Japanese names in Kanji characters.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	Japanese given name (or first name) in Kanji.
+[{...}].lastName	String	Optional	Japanese surname (or family name) in Kanji.
+Response
+Name	Type	Description	Enumerators
+namesAndMatchCandidates	Array of objects	List of submitted names converted to Latin alphabet.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted given name.	
+[{...}].lastName	String	Submitted surname.	
+[{...}].orderOption	String	Sorting order for matchCandidates.	
+[{...}].matchCandidates	Array of objects	List of possible transcriptions for the submitted name.	
+[{...}].candidateName	String	Inferred transcription of the submitted name to Latin alphabet.	
+[{...}].probability	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+[{...}].predScoreGivenName	Number	Higher implies a more reliable result (for given name or first name).	
+[{...}].predScoreFamilyName	Number	Higher implies a more reliable result (for family name or last name).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Translate Japanese Name To Latin code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameLatinCandidatesBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"塩田","lastName":"千春"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "塩田",
+      "lastName": "千春"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "namesAndMatchCandidates": [
+        {
+            "script": "HAN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "塩田",
+            "lastName": "千春",
+            "orderOption": "OrderScoreSquareFNLN",
+            "matchCandidates": [
+                {
+                    "candidateName": "chiharu shiota",
+                    "probability": 0.5000000149011616,
+                    "predScoreGivenName": -0.3543974459171295,
+                    "predScoreFamilyName": -0.004423846025019884
+                },
+                {
+                    "candidateName": "chiharu shioda",
+                    "probability": 0.2500000074505808,
+                    "predScoreGivenName": -1.2378724813461304,
+                    "predScoreFamilyName": -0.004423846025019884
+                }
+            ]
+        }
+    ]
+}
+Copy
+Translate Japanese Name To Kanji
+Translate Japanese Name To Kanji feature transcribes a Japanese given name or a Japanese surname (or both for more precision) written in Latin alphabet, into Kanji characters. The conversion of a Japanese name written in Kanji into Latin alphabet is called romanization. Several transcriptions for the same name are possible. This is why the feature returns a list of transcribed names, accompanied by a calibrated probability and sorted from most likely to least likely.
+
+information
+The name transcription will work with greater accuracy for names identified as Japanese.
+
+POST
+GET
+Description: Returns the most likely Kanji transcriptions for up to 100 Japanese given names and/or surnames in Latin alphabet (romanized).
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Translate Japanese Name To Kanji feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameKanjiCandidatesBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Japanese names in Latin alphabet.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	Japanese given name (or first name) in Latin.
+[{...}].lastName	String	Optional	Japanese surname (or family name) in Latin.
+Response
+Name	Type	Description	Enumerators
+namesAndMatchCandidates	Array of objects	List of submitted names converted to Kanji characters.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted given name.	
+[{...}].lastName	String	Submitted surname.	
+[{...}].orderOption	String	Sorting order for matchCandidates.	
+[{...}].matchCandidates	Array of objects	List of possible transcriptions for the submitted name.	
+[{...}].candidateName	String	Inferred transcription of the submitted name to Kanji.	
+[{...}].probability	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+[{...}].predScoreGivenName	Number	Higher implies a more reliable result (for given name or first name).	
+[{...}].predScoreFamilyName	Number	Higher implies a more reliable result (for family name or last name).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Translate Japanese Name To Kanji code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameKanjiCandidatesBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Sanae","lastName":"Yamamoto"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Sanae",
+      "lastName": "Yamamoto"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "namesAndMatchCandidates": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Sanae",
+            "lastName": "Yamamoto",
+            "orderOption": "OrderScoreSquareFNLN",
+            "matchCandidates": [
+                {
+                    "candidateName": "山本 早苗",
+                    "probability": 0.5000000000000001,
+                    "predScoreGivenName": -0.03954087197780609,
+                    "predScoreFamilyName": -0.014371121302247047
+                },
+                {
+                    "candidateName": "山本 沙苗",
+                    "probability": 0.25000000000000006,
+                    "predScoreGivenName": -5.180787086486816,
+                    "predScoreFamilyName": -0.014371121302247047
+                }
+            ]
+        }
+    ]
+}
+Copy
+Translate Japanese Name To Kanji Gender
+Translate Japanese Name To Kanji Gender feature transcribes a Japanese given name or a Japanese surname (or both) written in Latin alphabet, into Kanji characters. This feature is based on gender to improved accuracy of the transcription than the basic feature Translate Japanese Name To Kanji. The feature returns a list of the most likely transcribed names accompanied by a calibrated probability and sorted from most likely to least likely.
+
+information
+The name transcription will work with greater accuracy for names identified as Japanese.
+
+POST
+GET
+Description: Returns the most likely Kanji transcriptions for up to 100 Japanese given names and/or surnames in Latin alphabet, according to their gender.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Translate Japanese Name To Kanji Gender feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameGenderKanjiCandidatesBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Japanese names in Latin alphabet and their known gender.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	Japanese given name (or first name) in Latin.
+[{...}].lastName	String	Optional	Japanese surname (or family name) in Latin.
+[{...}].gender	String	Required	Most likely gender (female, or male).
+Response
+Name	Type	Description	Enumerators
+namesAndMatchCandidates	Array of objects	List of submitted names converted to Kanji characters.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].orderOption	String	Sorting order for matchCandidates.	
+[{...}].matchCandidates	Array of objects	List of possible transcriptions for the submitted name.	
+[{...}].candidateName	String	Inferred transcription of the submitted name to Kanji.	
+[{...}].probability	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+[{...}].predScoreGivenName	Number	Higher implies a more reliable result (for given name or first name).	
+[{...}].predScoreFamilyName	Number	Higher implies a more reliable result (for family name or last name).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Translate Japanese Name To Kanji Gender code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameGenderKanjiCandidatesBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Takashi","lastName":"Murakami","gender":"male"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Takashi",
+      "lastName": "Murakami",
+      "gender": "male"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "namesAndMatchCandidates": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Takashi",
+            "lastName": "Murakami",
+            "orderOption": "OrderScoreSquareFNLN",
+            "matchCandidates": [
+                {
+                    "candidateName": "村上 隆",
+                    "probability": 0.5000000000000001,
+                    "predScoreGivenName": -2.249242067337036,
+                    "predScoreFamilyName": -0.0006758159724995494
+                },
+                {
+                    "candidateName": "村上 崇",
+                    "probability": 0.25000000000000006,
+                    "predScoreGivenName": -2.572237014770508,
+                    "predScoreFamilyName": -0.0006758159724995494
+                }
+            ]
+        }
+    ]
+}
+Copy
+Match Japanese Name
+Match Japanese Name feature assesses and grades the quality of a transcription between a Japanese name in Latin characters and a Japanese name in Kanji. The feature returns the status of the match, and scores the names transcription.
+
+POST
+GET
+Description: Matches up to 100 full names in Kanji against corresponding family names and given names in Latin alphabet.
+Cost: 1 credit per name.
+Test: Match Japanese Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameMatchBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Japanese names in Kanji characters and in Latin aplhabet.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name1	Object	Required	.
+{...}.id	String	Optional	Unique identifier.
+{...}.firstName	String	Required	Japanese given name (or first name) in Latin alphabet.
+{...}.lastName	String	Required	Japanese surname (or family name) in Latin alphabet.
+[{...}].name2	Object	Required	.
+{...}.id	String	Optional	Unique identifier.
+{...}.name	String	Required	Japanese full name (family name and given name) in Kanji.
+Response
+Name	Type	Description	Enumerators
+matchedNames	Array of objects	List of submitted Japanese names with the status of their transcription.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].matchStatus	String	Success status of the match.	Match status
+[{...}].score	Number	Higher implies a better match, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Match Japanese Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/japaneseNameMatchBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c41","name1":{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Tessai","lastName":"Tomioka"},"name2":{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c43","name":"富岡 鉄斎"}}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c41",
+      "name1": {
+        "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+        "firstName": "Tessai",
+        "lastName": "Tomioka"
+      },
+      "name2": {
+        "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c43",
+        "name": "富岡 鉄斎"
+      }
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "matchedNames": [
+        {
+            "script": null,
+            "id": null,
+            "matchStatus": "Match",
+            "score": 1.002224089213585
+        }
+    ]
+}
+Copy
+Genderize Japanese Name
+Genderize Japanese Name feature accurately identifies the gender of a Japanese given name and a Japanese surname (optional), written in Kanji or in Latin alphabet, with slightly improved accuracy than the Genderize Japanese Full Name feature. The feature returns the most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a gender neutral name.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 Japanese given names and surnames (optional) in Latin alphabet or in Kanji characters.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Japanese Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderJapaneseNameBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of Japanese names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Required	Japanese given name (first name) in Latin or Kanji characters.
+[{...}].lastName	String	Optional	Japanese surname (family name) in Latin or Kanji characters.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted Japanese names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted given name.	
+[{...}].lastName	String	Submitted surname.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Japanese Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderJapaneseNameBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Satoshi","lastName":"Nakamoto"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Satoshi",
+      "lastName": "Nakamoto"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Satoshi",
+            "lastName": "Nakamoto",
+            "likelyGender": "male",
+            "genderScale": -0.9828731991489774,
+            "score": 24.94061932678776,
+            "probabilityCalibrated": 0.9914365995744887
+        }
+    ]
+}
+Copy
+Genderize Japanese Full Name
+Genderize Japanese Full Name feature accurately identifies the gender of an unsplit Japanese full name (surname andgiven name) written in Kanji characters. The feature returns most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a unisex name.
+
+information
+If the given and surname are clearly identifiable, the Genderize Japanese Name feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 unsplit Japanese full names (surnames and given names), written in Kanji characters or in Latin alphabet.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Japanese Full Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderJapaneseNameFullBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of Japanese full names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit Japanese full name (given name and surname) in Kanji or Latin alphabet.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted Japanese full names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Japanese Full Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderJapaneseNameFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"中松 義郎"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "中松 義郎"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "HAN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "中松 義郎",
+            "likelyGender": "male",
+            "genderScale": -0.22231473979961303,
+            "score": 3.72410721464353,
+            "probabilityCalibrated": 0.6111573698998065
+        }
+    ]
+}
+Copy
+Split Japanese Name
+Split Japanese Name feature accurately identifies the given name and the surname from an unsplit Japanese full name written in Latin alphabet or in Kanji characters.
+
+POST
+GET
+Description: Returns the most likely given name and surname structure of up to 100 full names (family names and given names) in Kanji or Latin alphabet.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Split Japanese Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/parseJapaneseNameBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of Japanese unsplit full names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Japanese full name (given name and surname) in Kanji or Latin alphabet.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted Japanese names separated into given name and surname structure.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].nameParserType	String	Most likely structure of the name.	Name structures
+[{...}].nameParserTypeAlt	String	Second most likely structure of the name.	Name structures
+[{...}].firstLastName	Object	Split name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Provided unique identifier.	
+{...}.firstName	String	Given name (or first name).	
+{...}.lastName	String	Surname (or family name).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Split Japanese Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/parseJapaneseNameBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"小島 秀夫"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "小島 秀夫"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "HAN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "小島 秀夫",
+            "nameParserType": "LN1FN1",
+            "nameParserTypeAlt": null,
+            "firstLastName": {
+                "script": null,
+                "id": null,
+                "firstName": "秀夫",
+                "lastName": "小島"
+            },
+            "score": 100
+        }
+    ]
+}
+Copy
+Chinese names
+Namsor provides dedicated name analysis API for the processing of Chinese names. Our name recognition AI can translate Chinese names to English (Pinyin). Among other features you can: infer the gender of a Chinese name or split a Chinese full name into a first name and a last name. We are also able to rate the quality of a transcriptions between a name in Pinyin and a name in Standard Mandarin Chinese.
+
+Translate Chinese Name To Pinyin
+Translate Chinese Name To Pinyin feature transcribes a Chinese full name written in standard Mandarin Chinese, into Pinyin (Latin alphabet). Pinyin is used to depict Mandarin logograms with the Latin alphabet, used by languages such as English.
+
+information
+The name transcription in Pinyin will only work with a Chinese full name (given name and surname).
+
+POST
+GET
+Description: Returns the most likely Pinyin transcription of up to 100 Chinese full names (given name and surname) in Standard Mandarin Chinese.
+Cost: 1 credit per name.
+Test: Translate Chinese Name To Pinyin feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/pinyinChineseNameBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Chinese full names (given name and surname) in standard Mandarin Chinese.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Chinese full name (given name and surname) in Standard Mandarin Chinese.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names converted to Pinyin (Latin alphabet).	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].nameParserType	String	Most likely structure of the name.	Name structures
+[{...}].nameParserTypeAlt	String	Second most likely structure of the name.	Name structures
+[{...}].firstLastName	Object	Transcribed name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Provided unique identifier.	
+{...}.firstName	String	Most likely given name (or first name) transcription in Pinyin.	
+{...}.lastName	String	Most likely surname (or family name or last name) transcription in Pinyin.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Translate Chinese Name To Pinyin code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/pinyinChineseNameBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"赵丽颖"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "赵丽颖"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "HAN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "赵丽颖",
+            "nameParserType": "LN1FN1",
+            "nameParserTypeAlt": null,
+            "firstLastName": {
+                "script": null,
+                "id": null,
+                "firstName": "LiYing",
+                "lastName": "Zhao"
+            },
+            "score": 4.641021485371256
+        }
+    ]
+}
+Copy
+Translate Chinese Name To Mandarin
+Translate Chinese Name To Mandarin feature transcribes a Chinese given name or a Chinese surname or both (for more precision) written in Pinyin (Latin alphabet), into standard Mandarin Chinese. Pinyin is used to depict Mandarin logograms with the Latin alphabet, used by languages such as English. Several transcriptions for the same name are possible. This is why the feature returns a list of transcribed names, accompanied by a calibrated probability and sorted from most likely to least likely.
+
+information
+Mandarin name transcription will only work with given names and surnames identified as Chinese.
+
+POST
+GET
+Description: Returns the most likely Standard Mandarin Chinese transcriptions using up to 100 given names and/or surnames in Pinyin.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Translate Chinese Name To Mandarin feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/chineseNameCandidatesBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Chinese names in Pinyin (Latin alphabet).
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	Chinese given name (or first name) in Pinyin.
+[{...}].lastName	String	Optional	Chinese surname (or family name or last name) in Pinyin.
+Response
+Name	Type	Description	Enumerators
+namesAndMatchCandidates	Array of objects	List of submitted names converted to standard mandarin Chinese.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted given name.	
+[{...}].lastName	String	Submitted surname.	
+[{...}].orderOption	String	Sorting order for matchCandidates.	
+[{...}].matchCandidates	Array of objects	List of possible transcriptions for the submitted name.	
+[{...}].candidateName	String	Inferred transcription of the submitted name to Standard Mandarin Chinese.	
+[{...}].probability	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+[{...}].predScoreGivenName	Number	Higher implies a more reliable result (for given name or first name).	
+[{...}].predScoreFamilyName	Number	Higher implies a more reliable result (for surname or last name).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Translate Chinese Name To Mandarin code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/chineseNameCandidatesBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"LiYing","lastName":"Zhao"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "LiYing",
+      "lastName": "Zhao"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "namesAndMatchCandidates": [
+        {
+            "script": null,
+            "id": null,
+            "firstName": "LiYing",
+            "lastName": "Zhao",
+            "orderOption": null,
+            "matchCandidates": [
+                {
+                    "candidateName": "赵丽英",
+                    "probability": 0.26153460755147884,
+                    "predScoreGivenName": 0,
+                    "predScoreFamilyName": 0
+                },
+                {
+                    "candidateName": "赵丽颖",
+                    "probability": 0.11856235542333707,
+                    "predScoreGivenName": 0,
+                    "predScoreFamilyName": 0
+                }
+            ]
+        }
+    ]
+}
+Copy
+Translate Chinese Name To Mandarin Gender
+Translate Chinese Name To Mandarin Gender feature transcribes a Chinese given name or a Chinese surname or both written in Pinyin (Latin alphabet), into standard Mandarin Chinese. This feature is based on gender to improve accuracy of the transcription than the basic feature Translate Chinese Name To Mandarin. The feature returns a list of the most likely transcribed names accompanied by a calibrated probability and sorted from most likely to least likely.
+
+information
+Mandarin name transcription will only work with given names and surnames identified as Chinese.
+
+POST
+GET
+Description: Returns the most likely Standard Mandarin Chinese transcriptions for up to 100 Pinyin given names and/or surnames, according to their gender.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Translate Chinese Name To Mandarin Gender feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/chineseNameCandidatesGenderBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Chinese names in Pinyin (Latin alphabet) and their known gender.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	Chinese given name (or first name) in Pinyin.
+[{...}].lastName	String	Optional	Chinese surname (or family name or last name) in Pinyin.
+[{...}].gender	String	Required	Gender (female or male).
+Response
+Name	Type	Description	Enumerators
+namesAndMatchCandidates	Array of objects	List of submitted names converted to standard mandarin Chinese.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted given name.	
+[{...}].lastName	String	Submitted surname.	
+[{...}].orderOption	String	Sorting order for matchCandidates.	
+[{...}].matchCandidates	Array of objects	List of possible transcriptions for the submitted name.	
+[{...}].candidateName	String	Inferred transcription of the submitted name to Standard Mandarin Chinese.	
+[{...}].probability	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+[{...}].predScoreGivenName	Number	Higher implies a more reliable result (for given name or first name).	
+[{...}].predScoreFamilyName	Number	Higher implies a more reliable result (for surname or last name).	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Translate Chinese Name To Mandarin Gender code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/chineseNameCandidatesGenderBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"LiYing","lastName":"Zhao","gender":"female"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "LiYing",
+      "lastName": "Zhao",
+      "gender": "female"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "namesAndMatchCandidates": [
+        {
+            "script": null,
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "LiYing",
+            "lastName": "Zhao",
+            "orderOption": null,
+            "matchCandidates": [
+                {
+                    "candidateName": "赵丽英",
+                    "probability": 0.07949583832056487,
+                    "predScoreGivenName": 0,
+                    "predScoreFamilyName": 0
+                },
+                {
+                    "candidateName": "赵丽颖",
+                    "probability": 0.021402725701690543,
+                    "predScoreGivenName": 0,
+                    "predScoreFamilyName": 0
+                }
+            ]
+        }
+    ]
+}
+Copy
+Match Chinese Name
+Match Chinese Name feature assesses and grades the quality of a transcription between a Chinese name in Latin characters (Pinyin) and a Chinese name in standard Mandarin Chinese. The feature returns the status of the match, and scores the names transcription.
+
+POST
+GET
+Description: Matches up to 100 full names in Standard Mandarin Chinese against corresponding given names and surnames in Pinyin.
+Cost: 1 credit per name.
+Test: Match Chinese Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/chineseNameMatchBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal Chinese names in Pinyin and in Mandarin Chinese.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name1	Object	Required	.
+{...}.id	String	Optional	Unique identifier.
+{...}.firstName	String	Required	Chinese surname (or family name or last name) in Pinyin.
+{...}.lastName	String	Required	Chinese given name (or first name) in Pinyin.
+[{...}].name2	Object	Required	.
+{...}.id	String	Optional	Unique identifier.
+{...}.name	String	Required	Chinese full name (given name and surname) in Standard Mandarin Chinese.
+Response
+Name	Type	Description	Enumerators
+matchedNames	Array of objects	List of submitted Chinese names with the status of their transcription.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].matchStatus	String	Success status of the match.	Match status
+[{...}].score	Number	Higher implies a better match, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Match Chinese Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/chineseNameMatchBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c41","name1":{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Hong","lastName":"Yu"},"name2":{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c43","name":"喻红"}}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c41",
+      "name1": {
+        "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+        "firstName": "Hong",
+        "lastName": "Yu"
+      },
+      "name2": {
+        "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c43",
+        "name": "喻红"
+      }
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "matchedNames": [
+        {
+            "script": null,
+            "id": null,
+            "matchStatus": "Match",
+            "score": 1.0017825620273417
+        }
+    ]
+}
+Copy
+Genderize Chinese Name
+Genderize Chinese Name feature accurately identifies the gender of a Chinese given name and a Chinese surname (optional), written in Latin alphabet (Pinyin) or Standard Mandarin Chinese, with slightly improved accuracy than the Genderize Chinese Full Name feature. The feature returns the most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a gender neutral name.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 given names and surnames (optional) in Pinyin or standard Mandarin Chinese.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Chinese Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderChineseNamePinyinBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of Chinese names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Required	Chinese given name (first name) in Pinyin or standard Mandarin Chinese.
+[{...}].lastName	String	Optional	Chinese surname (last name) in Pinyin or standard Mandarin Chinese.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted Chinese names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted given name.	
+[{...}].lastName	String	Submitted surname.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Chinese Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderChineseNamePinyinBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Dèng","lastName":"Qīngyún"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Dèng",
+      "lastName": "Qīngyún"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Dèng",
+            "lastName": "Qīngyún",
+            "likelyGender": "male",
+            "genderScale": -0.3132515162951226,
+            "score": 6.747266465582973,
+            "probabilityCalibrated": 0.6566257581475613
+        }
+    ]
+}
+Copy
+Genderize Chinese Full Name
+Genderize Chinese Full Name feature accurately identifies the gender of an unsplit Chinese full name written in standard Mandarin Chinese. The feature returns most likely gender accompanied by a calibrated probability. If the probability of the returned gender is between 45% and 55%, the name can be interpreted as a unisex name.
+
+information
+The Genderize Chinese Full Name feature will only work with Chinese full names written in standard Mandarin Chinese.
+
+POST
+GET
+Description: Returns the most likely gender of up to 100 unsplit Chinese full names (family names and given names) in in Standard Mandarin Chinese.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Genderize Chinese Full Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/genderChineseNameBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of Chinese full names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit Chinese full name (given name and surname) in Standard Mandarin Chinese.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted Chinese full names genderized.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].likelyGender	String	Most likely gender.	Genders
+[{...}].genderScale	Number	Gender scale ranging from -1 (male) to +1 (female).	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	Higher implies a more reliable result, ranges from 0 to 1.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Genderize Chinese Full Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/genderChineseNameBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"谢晓亮"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "谢晓亮"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "HAN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "谢晓亮",
+            "likelyGender": "male",
+            "genderScale": -0.7130895869378251,
+            "score": 8.286118331853034,
+            "probabilityCalibrated": 0.8565447934689125
+        }
+    ]
+}
+Copy
+Split Chinese Name
+Split Chinese Name feature accurately identifies the given name and the surname from an unsplit Chinese full name written in Latin alphabet (Pinyin) or in standard Mandarin Chinese.
+
+POST
+GET
+Description: Returns the most likely given name and surname structure of up to 100 full names in Standard Mandarin Chinese or in Pinyin.
+Precision:Precision gauge
+Cost: 1 credit per name.
+Test: Split Chinese Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/parseChineseNameBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of Chinese unsplit full names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Chinese full name (given name and surname) in Standard Mandarin Chinese or Pinyin.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted Chinese names separated into given name and surname structure.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].nameParserType	String	Most likely structure of the name.	Name structures
+[{...}].nameParserTypeAlt	String	Second most likely structure of the name.	Name structures
+[{...}].firstLastName	Object	Split name.	
+{...}.script	String	Name of the script used for the name, in ISO 15924 format.	Script
+{...}.id	String	Provided unique identifier.	
+{...}.firstName	String	Given name (or first name) in Standard Mandarin Chinese.	
+{...}.lastName	String	Surname (or family name or last name) in Standard Mandarin Chinese.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Split Chinese Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/parseChineseNameBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"赵丽颖"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "赵丽颖"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "HAN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "赵丽颖",
+            "nameParserType": "LN1FN1",
+            "nameParserTypeAlt": null,
+            "firstLastName": {
+                "script": null,
+                "id": null,
+                "firstName": "丽颖",
+                "lastName": "赵"
+            },
+            "score": 4.64102036931541
+        }
+    ]
+}
+Copy
+Indian names
+Namsor has developed extended functionality for Indian names. You will be able to determine a personn's caste group or religion from their first and/or last name. It is also possible to estimate the state or Union territory of residence directly from the name.
+
+Caste Indian Name
+Caste Indian Name feature analyzes a first name, a last name and an Indian state or Union territory of residence to determine the person's most likely caste group.Adding the first and last name increases the accuracy of the estimated religion. If the first and last name are not clearly identifiable, please use the Caste Indian Full Name feature.
+
+POST
+GET
+Description: Returns the caste from first names, last names and territories of residence.
+Cost: 10 credits per name.
+Test: Caste Indian Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/castegroupIndianBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal full names with their State or Union territory of origin or residence.
+[{...}].id	String	Optional	Provided unique identifier.
+[{...}].firstName	String	Optional	Indian first name, given name, nickname.
+[{...}].lastName	String	Optional	Indian last name, family name, surname.
+[{...}].subdivisionIso	String	Required	Indian state or Union territory (origin or residence), in ISO 3166-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their caste group.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Provided first name.	
+[{...}].lastName	String	Provided last name.	
+[{...}].castegroup	String	Most likely caste group.	Indian caste groups
+[{...}].castegroupAlt	String	Second most likely caste group.	Indian caste groups
+[{...}].castegroupTop	Array	Top of the most likely caste group, sorted from most likely to least likely.	Indian caste groups
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	The calibrated probability that castegroup has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that castegroup OR castegroupAlt have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Caste Indian Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/castegroupIndianBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Akash","lastName":"Sharma","subdivisionIso":"IN-UP"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Akash",
+      "lastName": "Sharma",
+      "subdivisionIso": "IN-UP"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "string",
+            "firstName": "Akash",
+            "lastName": "Sharma",
+            "castegroup": "General/High Caste",
+            "castegroupAlt": "General",
+            "castegroupTop": ["General/High Caste", "General", "OBC", "SC", "ST"],
+            "score": 11.127678155723578,
+            "probabilityCalibrated": 0.7031015750163506,
+            "probabilityAltCalibrated": 0.9535225800378421
+        }
+    ]
+}
+Copy
+Caste Indian Full Name
+Caste Indian Full Name feature analyzes an unsplit Indian full name and a Indian state or Union territory of residence to determine the person's most likely caste group.
+
+POST
+GET
+Description: Returns the caste from unsplit Indian full names and territories of residence.
+Cost: 10 credits per name.
+Test: Caste Indian Full Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/castegroupIndianFullBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal full names with their State or Union territory of origin or residence.
+[{...}].id	String	Optional	Provided unique identifier.
+[{...}].name	String	Required	Unsplit Indian full name (first name and last name).
+[{...}].subdivisionIso	String	Required	Indian state or Union territory (origin or residence), in ISO 3166-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their caste group.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Provided full name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].castegroup	String	Most likely caste group.	Indian caste groups
+[{...}].castegroupAlt	String	Second most likely caste group.	Indian caste groups
+[{...}].castegroupTop	Array	Top of the most likely caste group, sorted from most likely to least likely.	Indian caste groups
+[{...}].probabilityCalibrated	Number	The calibrated probability that castegroup has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that castegroup OR castegroupAlt have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Caste Indian Full Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/castegroupIndianFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"Akash Sharma","subdivisionIso":"IN-UP"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Akash Sharma",
+      "subdivisionIso": "IN-UP"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "string",
+            "name": "Akash Sharma",
+            "score": 7.8984899727105295,
+            "castegroup": "General/High Caste",
+            "castegroupAlt": "General",
+            "castegroupTop": ["General/High Caste", "General", "OBC", "ST", "SC"],
+            "probabilityCalibrated": 0.6400351364066995,
+            "probabilityAltCalibrated": 0.9559249062835251
+        }
+    ]
+}
+Copy
+Religion Indian Name
+Religion Indian Name feature analyzes a first name, a last name and a Indian state or Union territory of residence to determine the person's most likely religion. Adding the first and last name increases the accuracy of the estimated religion. If the first and last name are not clearly identifiable, please use the Religion Indian Full Name feature.
+
+POST
+GET
+Description: Returns religion from Indian first and last names and territories of origin.
+Cost: 10 credits per name.
+Test: Religion Indian Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/religionIndianBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names with their State or Union territory of origin or residence.
+[{...}].id	String	Optional	Provided unique identifier.
+[{...}].firstName	String	Optional	Indian first name, given name, nickname.
+[{...}].lastName	String	Optional	Indian last name, family name, surname.
+[{...}].subdivisionIso	String	Required	Indian state or Union territory (origin or residence), in ISO 3166-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their religion.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Provided first name.	
+[{...}].lastName	String	Provided last name.	
+[{...}].religion	String	Most likely religion.	Religions of India
+[{...}].religionAlt	String	Second most likely religion.	Religions of India
+[{...}].religionsTop	Array	Top of the most likely religions, sorted from most likely to least likely.	Religions of India
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	The calibrated probability that religion has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that religion OR religionAlt have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Religion Indian Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/religionIndianBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Akash","lastName":"Sharma","subdivisionIso":"IN-PB"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Akash",
+      "lastName": "Sharma",
+      "subdivisionIso": "IN-PB"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Akash",
+            "lastName": "Sharma",
+            "religion": "Hinduism",
+            "religionAlt": "Jain",
+            "religionsTop": ["Hinduism", "Jain", "Buddhist", "Christian", "Sikh", "Parsi", "Muslim"],
+            "score": 15.842441054636446,
+            "probabilityCalibrated": 0.8366121598622244,
+            "probabilityAltCalibrated": 0.9418751496555294
+        }
+    ]
+}
+Copy
+Religion Indian Full Name
+Religion Indian Name feature analyzes an unsplit Indian full name and a Indian state or Union territory of residence to determine the person's most likely religion.
+
+POST
+GET
+Description: Returns religion from unsplit Indian full names and territories of origin.
+Cost: 10 credits per name.
+Test: Religion Indian Full Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/religionIndianFullBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names with their State or Union territory of origin or residence.
+[{...}].id	String	Optional	Provided unique identifier.
+[{...}].name	String	Required	Unsplit Indian full name (first name and last name).
+[{...}].subdivisionIso	String	Required	Indian state or Union territory (origin or residence), in ISO 3166-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their religion.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Provided full name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].religion	String	Most likely religion.	Religions of India
+[{...}].religionAlt	String	Second most likely religion.	Religions of India
+[{...}].religionsTop	Array	Top of the most likely religions, sorted from most likely to least likely.	Religions of India
+[{...}].probabilityCalibrated	Number	The calibrated probability that religion has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that religion OR religionAlt have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Religion Indian Full Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/religionIndianFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"Akash Sharma","subdivisionIso":"IN-PB"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Akash Sharma",
+      "subdivisionIso": "IN-PB"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "Akash Sharma",
+            "score": 11.205099735191228,
+            "religion": "Hinduism",
+            "religionAlt": "Jain",
+            "religionsTop": ["Hinduism", "Jain", "Buddhist", "Christian", "Sikh", "Muslim", "Parsi"],
+            "probabilityCalibrated": 0.9535569047307475,
+            "probabilityAltCalibrated": 0.9896944325654494
+        }
+    ]
+}
+Copy
+Subclassification Indian Name
+Subclassification Indian Name feature analyzes a first name or a last name (or both for more precision) to estimate the person's most likely State or Union territory of residence (in ISO 3166-2 alpha-2 format), with slightly improved accuracy than the Subclassification Indian Full Name feature.
+
+POST
+GET
+Description: Returns the most likely Indian State or Union territory of residence of up to 100 Indian first names and/or last names.
+Cost: 10 credits per name.
+Test: Subclassification Indian Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/subclassificationIndianBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Provided unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their most likely geographic subdivision context.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].countryIso2	String	Most likely country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].subClassification	String	Most likely Indian State or Union territory of residence, in ISO 3166-2 alpha-2 format.	Indian subdivision
+[{...}].subClassificationAlt	String	Second most likely Indian State or Union territory of residence, in ISO 3166-2 alpha-2 format.	Indian subdivision
+[{...}].subclassificationTop	Array	Top 10 most likely Indian State or Union territory of residence, sorted from most likely to least likely.	Indian subdivision
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	The calibrated probability for subClassification to have been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability for subClassification OR subClassificationAlt to have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Subclassification Indian Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/subclassificationIndianBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Jannat","lastName":"Rahmani"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Jannat",
+      "lastName": "Rahmani"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Jannat",
+            "lastName": "Rahmani",
+            "countryIso2": "IN",
+            "subClassification": "IN-CH",
+            "subClassificationAlt": "IN-PY",
+            "subclassificationTop": ["IN-CH", "IN-PY", "IN-UP", "IN-AN", "IN-RJ", "IN-JH", "IN-KL", "IN-BR", "IN-DL", "IN-UT"],
+            "score": 2.5087208339960445,
+            "probabilityCalibrated": 0.3684249074494664,
+            "probabilityAltCalibrated": 0.4738687735374875
+        }
+    ]
+}
+Copy
+Subclassification Indian Full Name
+Subclassification Indian Full Name feature analyzes an unsplit full name (first name and last name) to identify the person's most likely State or Union territory of residence, in ISO 3166-2 alpha-2 format.
+
+information
+If the first and last name are clearly identifiable, the Subclassification Indian Name feature will be slightly more accurate.
+
+POST
+GET
+Description: Returns the most likely Indian State or Union territory of residence of up to 100 unsplit full names.
+Cost: 10 credits per name.
+Test: Subclassification Indian Full Name feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/subclassificationIndianFullBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Provided unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+Response
+Name	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their most likely geographic subdivision context.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].countryIso2	String	Most likely country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].subClassification	String	Most likely Indian State or Union territory of residence, in ISO 3166-2 alpha-2 format.	Indian subdivision
+[{...}].subClassificationAlt	String	Second most likely Indian State or Union territory of residence, in ISO 3166-2 alpha-2 format.	Indian subdivision
+[{...}].subclassificationTop	Array	Top 10 most likely Indian State or Union territory of residence, sorted from most likely to least likely.	Indian subdivision
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].probabilityCalibrated	Number	The calibrated probability for subClassification to have been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability for subClassification OR subClassificationAlt to have been guessed correctly. -1 = still calibrating.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Subclassification Indian Full Name code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/subclassificationIndianFullBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","name":"Jannat Rahmani"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Jannat Rahmani"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "Jannat Rahmani",
+            "countryIso2": "IN",
+            "subClassification": "IN-CH",
+            "subClassificationAlt": "IN-PY",
+            "subclassificationTop": ["IN-CH", "IN-PY", "IN-UP", "IN-AN", "IN-RJ", "IN-JH", "IN-KL", "IN-BR", "IN-DL", "IN-UT"],
+            "score": 2.5087208339960445,
+            "probabilityCalibrated": 0.3684249074494664,
+            "probabilityAltCalibrated": 0.4738687735374875
+        }
+    ]
+}
+Copy
+Phone number
+The Namsor name analysis software has been trained to evaluate formated, as well as unformatted, phone numbers. It is able to process a first name, last name and phone number in order to establish its phone prefix and country code as well as determine the structure of the phone number and check if it is valid.
+
+Format Phone Number
+Format Phone Number feature analyzes a first name, a last name and a phone number to determine the most likely phone prefix, country of origin and formated phone number.
+
+POST
+GET
+Description: Returns the most likely phone prefix, country of residence and format of up to 100 phone numbers using first names and last names.
+Precision:Precision gauge
+Cost: 11 credits per name.
+Test: Format Phone Number feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/phoneCodeBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNamesWithPhoneNumbers	Array of objects	Required	A list of personal names with phone numbers.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name (or given name).
+[{...}].lastName	String	Optional	Last name (or family name).
+[{...}].phoneNumber	String	Required	Phone number, formatted or unformatted.
+Response
+Name	Type	Description	Enumerators
+personalNamesWithPhoneNumbers	Array of objects	List of formatted phone numbers.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name (or given name).	
+[{...}].lastName	String	Submitted last name (or family name).	
+[{...}].internationalPhoneNumberVerified	String	Positively verified phone number, in E.164 format (according to LibPhoneNumber).	
+[{...}].phoneCountryIso2Verified	String	Positively verified country of origin of the phone number, in ISO 3166-1 alpha-2 format (according to LibPhoneNumber).	Country of residence
+[{...}].phoneCountryCode	Number	Most likely country calling code.	Phone prefix
+[{...}].phoneCountryCodeAlt	Number	Second most likely country calling code.	Phone prefix
+[{...}].phoneCountryIso2	String	Most likely country of origin of the phone number, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].phoneCountryIso2Alt	String	Second most likely country of origin of the phone number, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].originCountryIso2	String	Most likely country of residence of the name, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].originCountryIso2Alt	String	Second most likely country of residence of the name, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].phoneNumber	String	Submitted phone number.	
+[{...}].verified	Boolean	Indicates if the phone number could be positively verified using LibPhoneNumber.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Format Phone Number code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/phoneCodeBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNamesWithPhoneNumbers":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Jamini","lastName":"Roy","phoneNumber":"09804201420"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNamesWithPhoneNumbers": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Jamini",
+      "lastName": "Roy",
+      "phoneNumber": "09804201420"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNamesWithPhoneNumbers": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Jamini",
+            "lastName": "Roy",
+            "internationalPhoneNumberVerified": "+91 98042 01420",
+            "phoneCountryIso2Verified": "IN",
+            "phoneCountryCode": 91,
+            "phoneCountryCodeAlt": 98,
+            "phoneCountryIso2": "IN",
+            "phoneCountryIso2Alt": "IR",
+            "originCountryIso2": "BD",
+            "originCountryIso2Alt": "ID",
+            "phoneNumber": "09804201420",
+            "verified": true,
+            "score": 7.659341221254494
+        }
+    ]
+}
+Copy
+Format Phone Number Geo
+Format Phone Number Geo feature analyzes a first name, a last name, a phone number and a local context to determine the most likely phone prefix, country of origin and formated phone number, with improved accuracy than the basic feature Format Phone Number.
+
+POST
+GET
+Description: Returns the most likely phone prefix and format of up to 100 phone numbers using first names, last names and geographic context.
+Precision:Precision gauge
+Cost: 11 credits per name.
+Test: Format Phone Number Geo feature.
+HTTP request
+http request
+POST
+https://v2.namsor.com/NamSorAPIv2/api2/json/phoneCodeGeoBatch
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request body
+Name	Type	Required	Description
+personalNamesWithPhoneNumbers	Array of objects	Required	A list of personal names with phone numbers and their local context.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name (or given name).
+[{...}].lastName	String	Optional	Last name (or family name).
+[{...}].phoneNumber	String	Required	Phone number, formatted or unformatted.
+[{...}].countryIso2	String	Required	Most likely country of residence, in ISO 3166-1 alpha-2 format.
+[{...}].countryIso2Alt	String	Optional	Second most likely country of residence, in ISO 3166-1 alpha-2 format.
+Response
+Name	Type	Description	Enumerators
+personalNamesWithPhoneNumbers	Array of objects	List of formatted phone numbers.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name (or given name).	
+[{...}].lastName	String	Submitted last name (or family name).	
+[{...}].internationalPhoneNumberVerified	String	Positively verified phone number, in E.164 format (according to LibPhoneNumber).	
+[{...}].phoneCountryIso2Verified	String	Positively verified country of origin of the phone number, in ISO 3166-1 alpha-2 format (according to LibPhoneNumber).	Country of residence
+[{...}].phoneCountryCode	Number	Most likely country calling code.	Phone prefix
+[{...}].phoneCountryCodeAlt	Number	Second most likely country calling code.	Phone prefix
+[{...}].phoneCountryIso2	String	Most likely country of origin of the phone number, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].phoneCountryIso2Alt	String	Second most likely country of origin of the phone number, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].originCountryIso2	String	Most likely country of residence of the name, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].originCountryIso2Alt	String	Second most likely country of residence of the name, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].phoneNumber	String	Submitted phone number.	
+[{...}].verified	Boolean	Indicates if the phone number could be positively verified using LibPhoneNumber.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Format Phone Number Geo code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/phoneCodeGeoBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNamesWithPhoneNumbers":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Teniola","lastName":"Apata","phoneNumber":"08186472651","countryIso2":"NG","countryIso2Alt":"CI"}]}'
+Copy
+Body parameter:
+
+{
+  "personalNamesWithPhoneNumbers": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Teniola",
+      "lastName": "Apata",
+      "phoneNumber": "08186472651",
+      "countryIso2": "NG",
+      "countryIso2Alt": "CI"
+    }
+  ]
+}
+Copy
+The above command returns JSON structured like this:
+
+{
+    "personalNamesWithPhoneNumbers": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Teniola",
+            "lastName": "Apata",
+            "internationalPhoneNumberVerified": "+234 818 647 2651",
+            "phoneCountryIso2Verified": "NG",
+            "phoneCountryCode": 234,
+            "phoneCountryCodeAlt": 62,
+            "phoneCountryIso2": "NG",
+            "phoneCountryIso2Alt": "ID",
+            "originCountryIso2": "NG",
+            "originCountryIso2Alt": "CI",
+            "phoneNumber": "08186472651",
+            "verified": true,
+            "score": 2.362918055640346
+        }
+    ]
+}
+Copy
+Admin
+The Admin endpoints allow you to access a wide range of administrative tools. Access your API usage history, check the status and availability of Namsor's endpoints or query the possible enumerators for a given classifier. Among other features you may also set your privacy options or disable your key.
+
+Software Version
+GET
+Description: Returns the current version of the Namsor software.
+Cost: 1 credit per name.
+HTTP request
+http request
+GET
+https://v2.namsor.com/NamSorAPIv2/api2/json/softwareVersion
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Response
+Name	Type	Description
+softwareNameAndVersion	String	Name and version of the API.
+softwareVersion	Array	Software version, as an array (major, minor and patch).
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Software Version code sample for shell:
+
+curl --request GET \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/softwareVersion \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+Copy
+The above command returns JSON structured like this:
+
+{
+    "softwareNameAndVersion": "NamSorAPIv2.0.14B01",
+    "softwareVersion": [
+        2,
+        0,
+        14
+    ]
+}
+Copy
+Api Status
+GET
+Description: Returns the current version of the Namsor software and the status of the classifiers (API services).
+Cost: 1 credit per name.
+HTTP request
+http request
+GET
+https://v2.namsor.com/NamSorAPIv2/api2/json/apiStatus
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Response
+Name	Type	Description
+softwareVersion	Object	Software version information.
+{...}.softwareNameAndVersion	String	Name and version of the API.
+{...}.softwareVersion	Array	Software version, as an array (major, minor and patch).
+classifiers	Array of objects	List of available classifiers.
+[{...}].classifierName	String	Name of the classifier / service.
+[{...}].serving	Boolean	True if the classifier is serving requests (has reached minimal learning, is not shutting down).
+[{...}].learning	Boolean	True if the classifier is learning.
+[{...}].shuttingDown	Boolean	True if the classifier is shutting down.
+[{...}].probabilityCalibrated	Boolean	True if the classifier has finished the initial learning and has calibrated probabilities (during initial learning, calibrated probabilities will be equal to -1).
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Api Status code sample for shell:
+
+curl --request GET \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/apiStatus \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+Copy
+The above command returns JSON structured like this:
+
+{
+    "softwareVersion": {
+        "softwareNameAndVersion": "NamSorAPIv2.0.14B01",
+        "softwareVersion": [
+            2,
+            0,
+            14
+        ]
+    },
+    "classifiers": [
+        {
+            "classifierName": "name_category",
+            "serving": true,
+            "learning": true,
+            "shuttingDown": false,
+            "probabilityCalibrated": false
+        },
+        {
+            "classifierName": "personalname_gender",
+            "serving": true,
+            "learning": true,
+            "shuttingDown": false,
+            "probabilityCalibrated": true
+        }
+    ]
+}
+Copy
+Available Services
+GET
+Description: Returns a list of the API services (classifiers) and their usage costs in credits.
+Cost: 1 credit per name.
+HTTP request
+http request
+GET
+https://v2.namsor.com/NamSorAPIv2/api2/json/apiServices
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Response
+Name	Type	Description
+apiServices	Array of objects	List of available API services.
+[{...}].serviceName	String	Name of the classifier / service.
+[{...}].serviceGroup	String	Group the classifier / service belong to.
+[{...}].costInUnits	Number	Usage cost of the service, in credits.
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Available Services code sample for shell:
+
+curl --request GET \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/apiServices \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+Copy
+The above command returns JSON structured like this:
+
+{
+    "apiServices": [
+        {
+            "serviceName": "name_category",
+            "serviceGroup": "general",
+            "costInUnits": 1
+        },
+        {
+            "serviceName": "personalname_gender",
+            "serviceGroup": "gender",
+            "costInUnits": 1
+        }
+    ]
+}
+Copy
+Taxonomy Classes
+GET
+Description: Returns a list of the possible enumerators for a given classifier.
+Cost: 1 credit per name.
+HTTP request
+http request
+GET
+https://v2.namsor.com/NamSorAPIv2/api2/json/taxonomyClasses/{classifierName}
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Request parameters
+Name	Type	Required	Description
+classifierName	String	Required	Name of the classifier.
+Response
+Name	Type	Description
+classifierName	String	Name of the submitted classifier.
+taxonomyClasses	Array	Possible enumerators for this classifier.
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Taxonomy Classes code sample for shell:
+
+curl --request GET \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/taxonomyClasses/personalname_gender \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+Copy
+The above command returns JSON structured like this:
+
+{
+    "classifierName": "personalname_gender",
+    "taxonomyClasses": ["female", "male"]
+}
+Copy
+Api Usage
+GET
+Description: Returns information on your subscription plan, billing period and current API usage.
+Cost: 1 credit per name.
+HTTP request
+http request
+GET
+https://v2.namsor.com/NamSorAPIv2/api2/json/apiUsage
+Copy
+Request header
+Property	Required	Description
+X-API-KEY	Required	Your Namsor's services API key
+Response
+Name	Type	Description
+subscription	Object	Subscription information.
+{...}.apiKey	String	Your Namsor API key.
+{...}.planStarted	Number	Start date of the plan, in UNIX time format.
+{...}.priorPlanStarted	Number	Datetime when the user subscribed to the prior plan.
+{...}.planEnded	Number	End date of the plan, in UNIX time format.
+{...}.taxRate	Number	Applicable tax rate for the plan.
+{...}.planName	String	Name of the plan.
+{...}.planBaseFeesKey	String	Current plan key (as in Stripe product).
+{...}.planStatus	String	Plan status.
+{...}.planQuota	Number	Total number of credits associated with this plan.
+{...}.priceUSD	Number	Price in US dollars ($).
+{...}.priceOverageUSD	Number	Overage price in US dollars ($).
+{...}.price	Number	Price in the user's preferred currency.
+{...}.priceOverage	Number	Overaged price in the user's preferred currency.
+{...}.currency	String	The user's preferred currency.
+{...}.currencyFactor	Number	For USD, GBP, EUR - the factor is 1.
+{...}.stripeCustomerId	String	Unique Stripe Customer identifier.
+{...}.stripeStatus	String	Stripe status.
+{...}.stripeSubscription	String	Stripe subscription identifier.
+{...}.userId	String	Unique user identifier.
+billingPeriod	Object	Billing information.
+{...}.apiKey	String	Your Namsor API key.
+{...}.subscriptionStarted	Number	Subscription start date, in UNIX time format.
+{...}.periodStarted	Number	Subscription period start date, in UNIX time format.
+{...}.periodEnded	Number	Subscription end date, in UNIX time format.
+{...}.stripeCurrentPeriodEnd	Number	End of the current plan in Stripe.
+{...}.stripeCurrentPeriodStart	Number	Start of the current plan in Stripe.
+{...}.billingStatus	String	Status of the current period billing.
+{...}.usage	Number	Number of credits used so far.
+{...}.softLimit	Number	Current soft limit for the period.
+{...}.hardLimit	Number	Current hard limit for the period.
+overageExclTax	Number	Overage amount excluding tax.
+overageInclTax	Number	Overage amount including tax (if applicable).
+overageCurrency	String	Currency of the overage amount.
+overageQuantity	Number	Quantity above monthly quota of the current subscritpion, in credits.
+Code sample:
+ShellShell
+JavaJava
+PythonPython
+JavaScript
+JavaScript
+Api Usage code sample for shell:
+
+curl --request GET \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/apiUsage \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+Copy
+The above command returns JSON structured like this:
+
+{
+    "subscription": {
+        "apiKey": "v7menlws2yo8r2mnm10f3uai53tmblth",
+        "planStarted": 1602705605199,
+        "priorPlanStarted": 0,
+        "planEnded": 0,
+        "taxRate": 0,
+        "planName": "BASIC",
+        "planBaseFeesKey": "namsorapi_v2_BASIC_usd",
+        "planStatus": "OPEN",
+        "planQuota": 5000,
+        "priceUSD": 0,
+        "priceOverageUSD": 0.005,
+        "price": 0,
+        "priceOverage": 0.005,
+        "currency": "usd",
+        "currencyFactor": 1,
+        "stripeCustomerId": null,
+        "stripeStatus": null,
+        "stripeSubscription": null,
+        "userId": "GYUAUzTKPusJ3aqUH5gQte0dOQCr"
+    },
+    "billingPeriod": {
+        "apiKey": "v7menlws2yo8r2mnm10f3uai53tmblth",
+        "subscriptionStarted": 1602705635199,
+        "periodStarted": 1618430435199,
+        "periodEnded": 0,
+        "stripeCurrentPeriodEnd": 0,
+        "stripeCurrentPeriodStart": 0,
+        "billingStatus": "OPEN",
+        "usage": 34,
+        "softLimit": 3000,
+        "hardLimit": 5000
+    },
+    "overageExclTax": 0,
+    "overageInclTax": 0,
+    "overageCurrency": null,
+    "overageQuantity": 0
+}
+Copy
+close-button
+Features
+Origin of a name
+Find with a name the country of origin, the ethnicity, the diaspora, the US race classification and the existing corridors between names.
+Gender of a name
+Determine if a name is more likely to be male or female. Provide a full name or a first name and last name combination and even add a local context.
+Name type recognition
+Analyze proper names and deduce whether they are personal names, brand names, place names or pseudonyms.
+Split full name
+Take in a full name, and split it into a first name and last name structure.
+Japanese name translation
+Transcribe Japanese names in romanized English and Kanji characters, obtain a matching score for your transcriptions, split a Japanese full name or guess the gender.
+Chinese name translation
+Translate Chinese names into English or into Hanzi characters, discover the gender of a Chinese name, and distinguish between the first name and the last name.
+Indian name caste & religion
+Identify caste group, state or religion from an Indian first and last name.
+Phone number format
+Parse a name and phone number, and deduce its phone prefix and country code.
+Tools
+Excel / CSV
+Namsor's file parser can process data in a CSV or Excel document.
+API documentation
+We maintain a fully documented API, to help you throughout your integration process.
+Developer tools
+Download and use one of our SDK and CLI to enjoy some of Namsor's most popular endpoints.
+More
+About us
+Learn more about Namsor name verification technology.
+Pricing
+Discover our pricing plans and choose the one that best suits your needs.
+Contact
+Send us a message or make an appointment online with our team.
+Namsor
+LinkedIn
+GitHub
+Twitter
+Features
+Origin of a name
+Gender of a name
+Name type recognition
+Split full name
+Japanese name translation
+Chinese name translation
+Indian name
+Phone number format
+Tools
+Excel / CSV
+API documentation
+Developer tools
+API enumerators
+More
+Home
+About us
+Pricing
+Contact
+Account
+My account
+Login
+Sign up
+Forgot your password
+Terms
+Privacy Policy
+Terms and Conditions
+Data Processing Agreement
+Languages
+Français
+English
+© Namsor™ Applied Onomastics | NamSor SAS is a French Limited Liability Company, Reg. 81148844400019 - VAT FR84811488444 | Data Protection Reg. 1876223
+Visa
+Mastercard
+PayPal
+European Union flag
+GPDR compliant
+California flag
+CCPA compliant
+Navigated to API documentation
