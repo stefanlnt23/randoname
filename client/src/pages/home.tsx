@@ -401,7 +401,7 @@ export default function Home() {
               </Card>
 
               {/* Right Column: Generated Names */}
-              <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm">
+              <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm order-3 md:col-span-2 md:order-3 lg:col-span-1 lg:order-3">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg text-center flex items-center justify-center gap-2">
                     <Sparkles className="w-5 h-5 text-accent" />
