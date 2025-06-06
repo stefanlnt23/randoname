@@ -323,13 +323,13 @@ export default function Home() {
           <CardContent className="p-6">
             <form onSubmit={handleSearch} className="flex gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <input
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 z-10" />
+                <Input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for a specific name..."
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-border focus:border-primary focus:outline-none transition-colors bg-background"
+                  className="pl-10 h-12 text-base border-2 focus:border-primary transition-colors"
                 />
               </div>
               <Button 
