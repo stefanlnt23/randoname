@@ -330,11 +330,15 @@ export default function Home() {
                 Instant Generation
               </span>
               <span className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-primary" />
+                Name Origins & Meanings
+              </span>
+              <span className="flex items-center gap-2">
                 <Heart className="w-4 h-4 text-accent" />
                 Save Favorites
               </span>
               <span className="flex items-center gap-2">
-                <Copy className="w-4 h-4 text-primary" />
+                <Copy className="w-4 h-4 text-secondary" />
                 Copy Names
               </span>
             </div>
@@ -608,6 +612,25 @@ export default function Home() {
                               )}
                             </div>
                             <div className="flex gap-2 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  toggleNameMeaning(nameData.name);
+                                }}
+                                title="Show name details and origin"
+                                className="text-muted-foreground hover:text-primary hover:bg-background/50 h-8 w-8 p-0"
+                                type="button"
+                                disabled={lookupNameMutation.isPending || nameOriginMutation.isPending}
+                              >
+                                {(lookupNameMutation.isPending || nameOriginMutation.isPending) ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <Info className="w-4 h-4" />
+                                )}
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
