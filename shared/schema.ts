@@ -3,14 +3,16 @@ import { z } from "zod";
 export const generateNamesSchema = z.object({
   gender: z.string().optional(),
   usage: z.string(),
-  number: z.number().min(1).max(6),
-  randomsurname: z.boolean()
+  number: z.number().min(1).max(6)
 });
 
 export const nameDataSchema = z.object({
   name: z.string(),
   meaning: z.string().optional(),
-  usage: z.string().optional()
+  usage: z.string().optional(),
+  gender: z.string().optional(),
+  etymology: z.string().optional(),
+  relatedNames: z.array(z.string()).optional()
 });
 
 // API returns simple string arrays for random names
@@ -42,7 +44,22 @@ export type ApiResponse = z.infer<typeof apiResponseSchema>;
 export const savedNameSchema = z.object({
   name: z.string(),
   meaning: z.string().optional(),
-  savedAt: z.number()
+  savedAt: z.string()
+});
+
+// Search schema for name lookup
+export const searchNameSchema = z.object({
+  name: z.string().min(1),
+  exact: z.boolean().optional()
+});
+
+// Related names schema
+export const relatedNamesSchema = z.object({
+  name: z.string().min(1),
+  usage: z.string().optional(),
+  gender: z.string().optional()
 });
 
 export type SavedName = z.infer<typeof savedNameSchema>;
+export type SearchNameRequest = z.infer<typeof searchNameSchema>;
+export type RelatedNamesRequest = z.infer<typeof relatedNamesSchema>;

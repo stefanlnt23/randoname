@@ -44,8 +44,7 @@ export default function Home() {
     defaultValues: {
       gender: '',
       usage: 'eng',
-      number: 3,
-      randomsurname: false
+      number: 3
     }
   });
 
