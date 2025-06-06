@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generateNamesSchema, type GenerateNamesRequest, type NameData, type SavedName } from "@shared/schema";
+import { generateNamesSchema, type GenerateNamesRequest, type NameData, type SavedName, type SearchNameRequest, type RelatedNamesRequest } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Heart, X, Zap, Loader2, Sparkles, Info, Menu } from "lucide-react";
+import { Copy, Heart, X, Zap, Loader2, Sparkles, Info, Menu, Search, BookOpen, Users, ChevronDown, ChevronUp } from "lucide-react";
 
 const culturalOrigins = [
   { value: "eng", label: "English", flag: "🇺🇸" },
@@ -37,6 +37,10 @@ export default function Home() {
   const [savedNames, setSavedNames] = useState<SavedName[]>([]);
   const [numberOfNames, setNumberOfNames] = useState<number>(3);
   const [showCopyToast, setShowCopyToast] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedName, setSelectedName] = useState<NameData | null>(null);
+  const [relatedNames, setRelatedNames] = useState<string[]>([]);
+  const [expandedNameMeanings, setExpandedNameMeanings] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   const form = useForm<GenerateNamesRequest>({
@@ -82,8 +86,96 @@ export default function Home() {
     }
   });
 
+  const lookupNameMutation = useMutation({
+    mutationFn: async (data: SearchNameRequest) => {
+      const response = await apiRequest('POST', '/api/lookup-name', data);
+      return response.json();
+    },
+    onSuccess: (data: NameData) => {
+      setSelectedName(data);
+      // Update the generated names array with the meaning if it exists
+      setGeneratedNames(prev => prev.map(name => 
+        name.name.toLowerCase() === data.name.toLowerCase() 
+          ? { ...name, meaning: data.meaning, etymology: data.etymology, gender: data.gender }
+          : name
+      ));
+    },
+    onError: (error) => {
+      toast({
+        title: "Name lookup failed",
+        description: error instanceof Error ? error.message : "Could not find information for this name.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const relatedNamesMutation = useMutation({
+    mutationFn: async (data: RelatedNamesRequest) => {
+      const response = await apiRequest('POST', '/api/related-names', data);
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setRelatedNames(data.relatedNames || []);
+    },
+    onError: (error) => {
+      toast({
+        title: "Related names lookup failed",
+        description: error instanceof Error ? error.message : "Could not find related names.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const searchNameMutation = useMutation({
+    mutationFn: async (name: string) => {
+      const response = await apiRequest('POST', '/api/lookup-name', { name, exact: false });
+      return response.json();
+    },
+    onSuccess: (data: NameData) => {
+      setGeneratedNames([data]);
+      setSelectedName(data);
+    },
+    onError: (error) => {
+      toast({
+        title: "Search failed",
+        description: error instanceof Error ? error.message : "Could not find the searched name.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const onSubmit = (data: GenerateNamesRequest) => {
     generateNamesMutation.mutate(data);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      searchNameMutation.mutate(searchQuery.trim());
+    }
+  };
+
+  const lookupNameMeaning = (name: string) => {
+    lookupNameMutation.mutate({ name, exact: false });
+  };
+
+  const findRelatedNames = (name: string, usage?: string, gender?: string) => {
+    relatedNamesMutation.mutate({ name, usage, gender });
+  };
+
+  const toggleNameMeaning = (name: string) => {
+    const newExpanded = new Set(expandedNameMeanings);
+    if (newExpanded.has(name)) {
+      newExpanded.delete(name);
+    } else {
+      newExpanded.add(name);
+      // Fetch meaning if not already available
+      const nameData = generatedNames.find(n => n.name === name);
+      if (nameData && !nameData.meaning) {
+        lookupNameMeaning(name);
+      }
+    }
+    setExpandedNameMeanings(newExpanded);
   };
 
   const copyToClipboard = async (name: string) => {
@@ -179,10 +271,49 @@ export default function Home() {
                 <Heart className="w-4 h-4 text-accent" />
                 Save Favorites
               </span>
+              <span className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-primary" />
+                Name Meanings
+              </span>
+              <span className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-secondary" />
+                Related Names
+              </span>
             </div>
           </div>
         </div>
       </header>
+
+      {/* Search Section */}
+      <section className="max-w-4xl mx-auto px-4 py-6">
+        <Card className="border-2 shadow-lg bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <form onSubmit={handleSearch} className="flex gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for a specific name..."
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-border focus:border-primary focus:outline-none transition-colors bg-background"
+                />
+              </div>
+              <Button 
+                type="submit" 
+                disabled={searchNameMutation.isPending || !searchQuery.trim()}
+                className="px-6 py-3 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 transition-all duration-300"
+              >
+                {searchNameMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </section>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Form {...form}>
@@ -348,30 +479,6 @@ export default function Home() {
                           <span>10</span>
                         </div>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Random Surname Toggle */}
-                  <FormField
-                    control={form.control}
-                    name="randomsurname"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between rounded-lg border-2 border-border p-4 hover:border-primary/50 transition-colors duration-300">
-                        <div className="space-y-0.5">
-                          <FormLabel className="text-sm font-medium">
-                            Include Surnames
-                          </FormLabel>
-                          <div className="text-xs text-muted-foreground">
-                            Add random surnames to names
-                          </div>
-                        </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
                       </FormItem>
                     )}
                   />
