@@ -209,6 +209,12 @@ export default function Home() {
     relatedNamesMutation.mutate({ name, usage, gender });
   };
 
+  const fetchNameOrigin = (name: string) => {
+    // Try to determine if it's a first name or last name
+    // For now, treat single names as first names
+    nameOriginMutation.mutate({ firstName: name });
+  };
+
   const toggleNameMeaning = (name: string) => {
     const newExpanded = new Set(expandedNameMeanings);
     if (newExpanded.has(name)) {
@@ -219,6 +225,10 @@ export default function Home() {
       const nameData = generatedNames.find(n => n.name === name);
       if (nameData && !nameData.meaning) {
         lookupNameMeaning(name);
+      }
+      // Also fetch origin data if not available
+      if (nameData && !nameData.originData) {
+        fetchNameOrigin(name);
       }
     }
     setExpandedNameMeanings(newExpanded);
