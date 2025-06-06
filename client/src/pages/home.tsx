@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generateNamesSchema, type GenerateNamesRequest, type NameData, type SavedName, type SearchNameRequest, type RelatedNamesRequest } from "@shared/schema";
+import { generateNamesSchema, type GenerateNamesRequest, type NameData, type SavedName, type SearchNameRequest, type RelatedNamesRequest, type NameOriginRequest } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
@@ -15,7 +15,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Copy, Heart, X, Zap, Loader2, Sparkles, Info, Menu, Search, BookOpen, Users, ChevronDown, ChevronUp, Filter } from "lucide-react";
+import { Copy, Heart, X, Zap, Loader2, Sparkles, Info, Menu, Search, BookOpen, Users, ChevronDown, ChevronUp, Filter, Globe, MapPin } from "lucide-react";
 
 const culturalOrigins = [
   { value: "eng", label: "English", flag: "🇺🇸" },
@@ -140,6 +140,29 @@ export default function Home() {
       toast({
         title: "Search failed",
         description: error instanceof Error ? error.message : "Could not find the searched name.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const nameOriginMutation = useMutation({
+    mutationFn: async (data: NameOriginRequest) => {
+      const response = await apiRequest('POST', '/api/name-origin', data);
+      return response.json();
+    },
+    onSuccess: (originData, variables) => {
+      // Update the generated names array with origin data
+      const nameToUpdate = variables.firstName || variables.lastName || '';
+      setGeneratedNames(prev => prev.map(name => 
+        name.name.toLowerCase() === nameToUpdate.toLowerCase() 
+          ? { ...name, originData }
+          : name
+      ));
+    },
+    onError: (error) => {
+      toast({
+        title: "Origin lookup failed",
+        description: error instanceof Error ? error.message : "Could not find origin information for this name.",
         variant: "destructive"
       });
     }

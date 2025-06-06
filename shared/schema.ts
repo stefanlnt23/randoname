@@ -12,7 +12,15 @@ export const nameDataSchema = z.object({
   usage: z.string().optional(),
   gender: z.string().optional(),
   etymology: z.string().optional(),
-  relatedNames: z.array(z.string()).optional()
+  relatedNames: z.array(z.string()).optional(),
+  originData: z.object({
+    countryOrigin: z.string(),
+    countryOriginAlt: z.string().optional(),
+    regionOrigin: z.string(),
+    subRegionOrigin: z.string().optional(),
+    probabilityCalibrated: z.number(),
+    score: z.number()
+  }).optional()
 });
 
 // API returns simple string arrays for random names
@@ -60,6 +68,28 @@ export const relatedNamesSchema = z.object({
   gender: z.string().optional()
 });
 
+// Name origin schema for Namsor API
+export const nameOriginSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional()
+});
+
+export const nameOriginResponseSchema = z.object({
+  personalNames: z.array(z.object({
+    id: z.string().optional(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    countryOrigin: z.string(),
+    countryOriginAlt: z.string().optional(),
+    regionOrigin: z.string(),
+    subRegionOrigin: z.string().optional(),
+    probabilityCalibrated: z.number(),
+    score: z.number()
+  }))
+});
+
 export type SavedName = z.infer<typeof savedNameSchema>;
 export type SearchNameRequest = z.infer<typeof searchNameSchema>;
 export type RelatedNamesRequest = z.infer<typeof relatedNamesSchema>;
+export type NameOriginRequest = z.infer<typeof nameOriginSchema>;
+export type NameOriginResponse = z.infer<typeof nameOriginResponseSchema>;

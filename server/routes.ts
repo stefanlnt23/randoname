@@ -1,9 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { generateNamesSchema, randomApiResponseSchema, lookupApiResponseSchema, searchNameSchema, relatedNamesSchema, type NameData } from "@shared/schema";
+import { generateNamesSchema, randomApiResponseSchema, lookupApiResponseSchema, searchNameSchema, relatedNamesSchema, nameOriginSchema, nameOriginResponseSchema, type NameData } from "@shared/schema";
 
 const API_KEY = process.env.BEHINDTHENAME_API_KEY || 'st518809570';
 const API_BASE_URL = 'https://www.behindthename.com/api';
+const NAMSOR_API_KEY = process.env.NAMSOR_API_KEY;
+const NAMSOR_API_BASE_URL = 'https://v2.namsor.com/NamSorAPIv2/api2/json';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -143,6 +145,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error finding related names:', error);
       res.status(500).json({ error: 'Failed to find related names. Please try again.' });
+    }
+  });
+
+  // Name origin endpoint using Namsor API
+  app.post("/api/name-origin", async (req, res) => {
+    try {
+      const validated = nameOriginSchema.parse(req.body);
+      
+      if (!NAMSOR_API_KEY) {
+        return res.status(500).json({ error: 'Namsor API key not configured' });
+      }
+
+      // Prepare request body for Namsor API
+      const requestBody = {
+        personalNames: [{
+          id: "name-origin-request",
+          firstName: validated.firstName || "",
+          lastName: validated.lastName || ""
+        }]
+      };
+
+      const response = await fetch(`${NAMSOR_API_BASE_URL}/originBatch`, {
+        method: 'POST',
+        headers: {
+          'X-API-KEY': NAMSOR_API_KEY,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Namsor API request failed: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Validate API response
+      const validatedResponse = nameOriginResponseSchema.parse(data);
+      
+      if (!validatedResponse.personalNames || validatedResponse.personalNames.length === 0) {
+        return res.status(404).json({ error: 'No origin data found' });
+      }
+      
+      const originData = validatedResponse.personalNames[0];
+      
+      // Format response for frontend
+      const result = {
+        countryOrigin: originData.countryOrigin,
+        countryOriginAlt: originData.countryOriginAlt,
+        regionOrigin: originData.regionOrigin,
+        subRegionOrigin: originData.subRegionOrigin,
+        probabilityCalibrated: originData.probabilityCalibrated,
+        score: originData.score
+      };
+      
+      res.json(result);
+      
+    } catch (error) {
+      console.error('Error getting name origin:', error);
+      res.status(500).json({ error: 'Failed to get name origin. Please try again.' });
     }
   });
 

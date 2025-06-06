@@ -1,0 +1,383 @@
+Name Origin
+
+Name Origin feature analyzes a first name and/or a last name to identify its country of origin with slightly improved accuracy than the Full Name Origin feature. Adding a first and last name increases the accuracy of the determined origin.
+The feature returns the region of origin, the country of origin, and a list of the top 10 countries of origin, ordered from most likely to least likely. Each country of origin returned is accompanied by a calibrated probability.
+
+Note that the name diaspora feature may be better suited for multicultural countries, such as the United States, Canada, Australia, New-Zealand and other "melting-pots".
+
+    Description: Returns the most likely country of origin of up to 100 first names and/or last names.
+    Precision:Precision gauge
+    Cost: 10 credits per name.
+    Test: Name Origin feature.
+
+HTTP request
+http request
+POST
+
+https://v2.namsor.com/NamSorAPIv2/api2/json/originBatch
+
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request bodyName	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Optional	Last name, family name, surname.
+ResponseName	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their countries of origin.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name, given name or nickname.	
+[{...}].lastName	String	Submitted last name, family name or surname.	
+[{...}].countryOrigin	String	Most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countryOriginAlt	String	Second most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countriesOriginTop	Array	Top 10 most likely countries of origin, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	Country of origin
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].regionOrigin	String	Most likely region of origin.	Regions of origin or residence
+[{...}].topRegionOrigin	String	Most likely region of origin (alternative classification).	Regions of origin or residence
+[{...}].subRegionOrigin	String	Most likely sub-region of origin.	Sub regions of origin or residence
+[{...}].probabilityCalibrated	Number	The calibrated probability that countryOrigin has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that countryOrigin OR countryOriginAlt have been guessed correctly. -1 = still calibrating.	
+			Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics for the most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in most likely country of origin (countryOrigin).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in most likely country of origin (countryOrigin).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics for the second most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in second most likely country of origin (countryOriginAlt).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in second most likely country of origin (countryOriginAlt).	
+Code sample:
+
+Name Origin code sample for shell:
+
+curl --request POST \ 
+--url https://v2.namsor.com/NamSorAPIv2/api2/json/originBatch \
+--header 'X-API-KEY: your-api-key' \
+--header 'Accept: application/json'
+--header 'Content-Type: application/json' \
+--data '{"personalNames":[{"id":"e630dda5-13b3-42c5-8f1d-648aa8a21c42","firstName":"Keith","lastName":"Haring"}]}'
+
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "firstName": "Keith",
+      "lastName": "Haring"
+    }
+  ]
+}
+
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "countryOrigin": "GB",
+            "countryOriginAlt": "IE",
+            "countriesOriginTop": ["GB", "IE", "DE", "NL", "EE", "SE", "DK", "MY", "ID", "KH"],
+            "score": 10.255274142073363,
+            "regionOrigin": "Europe",
+            "topRegionOrigin": "Europe",
+            "subRegionOrigin": "Northern Europe",
+            "probabilityCalibrated": 0.7724670883776785,
+            "probabilityAltCalibrated": 0.8719112661893521
+        }
+    ]
+}
+
+Values ​​returned only if the religious statistics option is enabled X-OPTION-RELIGION-STATS: True.
+
+{
+  religionStats: [
+    { religion: 'Christian', pct: 85.24262131 },
+    { religion: 'Unaffiliated', pct: 14.20710355 },
+    { religion: 'Other', pct: 0.300150075 },
+    { religion: 'Buddhist', pct: 0.050025013 },
+    { religion: 'Folk', pct: 0.050025013 },
+    { religion: 'Hindu', pct: 0.050025013 },
+    { religion: 'Jewish', pct: 0.050025013 },
+    { religion: 'Muslim', pct: 0.050025013 },
+  ],
+  religionStatsAlt: [
+    { religion: 'Christian', pct: 88.97427291753932 },
+    { religion: 'Unaffiliated', pct: 9.78531187532157 },
+    { religion: 'Muslim', pct: 0.6298564872835054 },
+    { religion: 'Other', pct: 0.16200879680269425 },
+    { religion: 'Buddhist', pct: 0.13284624102403442 },
+    { religion: 'Folk', pct: 0.13284624102403442 },
+    { religion: 'Hindu', pct: 0.13284624102403442 },
+    { religion: 'Jewish', pct: 0.050011199980789234 },
+  ],
+}
+
+Full Name Origin
+
+Full Name Origin feature analyzes an unsplit full name (first name and last name) to identify its country of origin.
+The feature returns the region of origin, the country of origin, and a list of the top 10 countries of origin, ordered from most likely to least likely. Each country of origin returned is accompanied by a calibrated probability.
+
+Note that the name diaspora feature may be better suited for multicultural countries, such as the United States, Canada, Australia, New-Zealand and other "melting-pots".
+information
+
+If the first and last name are clearly identifiable, the Name Origin feature will be slightly more accurate.
+
+    Description: Returns the most likely country of origin of up to 100 unsplit full names.
+    Precision:Precision gauge
+    Cost: 10 credits per name.
+    Test: Full Name Origin feature.
+
+HTTP request
+http request
+POST
+
+https://v2.namsor.com/NamSorAPIv2/api2/json/originFullBatch
+
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request bodyName	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+ResponseName	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their countries of origin.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].countryOrigin	String	Most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countryOriginAlt	String	Second most likely country of origin, in ISO 3166-1 alpha-2 format.	Country of origin
+[{...}].countriesOriginTop	Array	Top 10 most likely countries of origin, in ISO 3166-1 alpha-2 format, sorted from most likely to least likely.	Country of origin
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].regionOrigin	String	Most likely region of origin.	Regions of origin or residence
+[{...}].topRegionOrigin	String	Most likely region of origin (alternative classification).	Regions of origin or residence
+[{...}].subRegionOrigin	String	Most likely sub-region of origin.	Sub regions of origin or residence
+[{...}].probabilityCalibrated	Number	The calibrated probability that countryOrigin has been guessed correctly. -1 = still calibrating.	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that countryOrigin OR countryOriginAlt have been guessed correctly. -1 = still calibrating.	
+			Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics for the most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in most likely country of origin (countryOrigin).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in most likely country of origin (countryOrigin).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics for the second most likely country of origin. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion in second most likely country of origin (countryOriginAlt).	Religions
+[{...}].pct	Number	Percentage of population practicing this religion in second most likely country of origin (countryOriginAlt).	
+
+Full Name Origin code sample for java:
+
+HttpResponse<String> response = Unirest.post("https://v2.namsor.com/NamSorAPIv2/api2/json/originFullBatch")
+.header("X-API-KEY", "your-api-key")
+.header("Accept", "application/json")
+.header("Content-Type", "application/json")
+.body("{\"personalNames\":[{\"id\":\"e630dda5-13b3-42c5-8f1d-648aa8a21c42\",\"name\":\"Keith Haring\"}]}")
+.asString();
+
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+      "name": "Keith Haring"
+    }
+  ]
+}
+
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "e630dda5-13b3-42c5-8f1d-648aa8a21c42",
+            "name": "Keith Haring",
+            "countryOrigin": "GB",
+            "countryOriginAlt": "IE",
+            "countriesOriginTop": ["GB", "IE", "DE", "NL", "DK", "SE", "CH", "EE", "MY", "HK"],
+            "score": 11.240061482140302,
+            "regionOrigin": "Europe",
+            "topRegionOrigin": "Europe",
+            "subRegionOrigin": "Northern Europe",
+            "probabilityCalibrated": 0.8369777938445658,
+            "probabilityAltCalibrated": 0.9297055536113793
+        }
+    ]
+}
+
+Name Diaspora
+
+Name Diaspora feature analyzes a name to identify the most likely ethnicity or diaspora with slightly improved accuracy than the Full Name Diaspora feature. Adding a first and last name and a country of residence increases the accuracy of the determined diaspora.
+The feature returns the most likely ethnicity or a diaspora and the top 10 most likely ethnicities, ordered from most likely to least likely. Each ethnicity returned is accompanied by a calibrated probability.
+
+    Description: Returns the most likely ethnicity or diaspora of up to 100 first names (optional) and last names, according to their country of residence.
+    Precision:Precision gauge
+    Cost: 20 credits per name.
+    Test: Name Diaspora feature.
+
+HTTP request
+http request
+POST
+
+https://v2.namsor.com/NamSorAPIv2/api2/json/diasporaBatch
+
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request bodyName	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal names with their country of residence.
+[{...}].id	String	Optional	Unique identifier.
+[{...}].firstName	String	Optional	First name, given name, nickname.
+[{...}].lastName	String	Required	Last name, family name, surname.
+[{...}].countryIso2	String	Optional	Country of residence, in ISO 3166-1 alpha-2 format. "US" by default (if no value indicated).
+ResponseName	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted names with their ethnicities.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].firstName	String	Submitted first name.	
+[{...}].lastName	String	Submitted last name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].ethnicityAlt	String	Second most likely ethnicity.	Ethnicities or diasporas
+[{...}].ethnicity	String	Most likely ethnicity.	Ethnicities or diasporas
+[{...}].lifted	Boolean	Indicates if the output ethnicity is based on machine learning only, or further lifted as a known fact by a country-specific rule.	
+[{...}].countryIso2	String	Submitted country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].ethnicitiesTop	Array	Top 10 most likely ethnicities, ordered from most likely to least likely.	Ethnicities or diasporas
+[{...}].probabilityCalibrated	Number	The calibrated probability that ethnicity has been guessed correctly. -1 = still calibrating .	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that ethnicity OR ethnicityAlt have been guessed correctly. -1 = still calibrating .	
+			Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics in the country of origin of the most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of most likely diaspora (ethnicity).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the most likely diaspora (ethnicity).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics in the country of origin of the second most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of second most likely diaspora (ethnicityAlt).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the second most likely diaspora (ethnicityAlt).	
+
+Name Diaspora code sample for java:
+
+HttpResponse<String> response = Unirest.post("https://v2.namsor.com/NamSorAPIv2/api2/json/diasporaBatch")
+.header("X-API-KEY", "your-api-key")
+.header("Accept", "application/json")
+.header("Content-Type", "application/json")
+.body("{\"personalNames\":[{\"id\":\"0d7d6417-0bbb-4205-951d-b3473f605b56\",\"firstName\":\"Keith\",\"lastName\":\"Haring\",\"countryIso2\":\"US\"}]}")
+.asString();
+
+Body parameter:
+
+{
+  "personalNames": [
+    {
+      "id": "0d7d6417-0bbb-4205-951d-b3473f605b56",
+      "firstName": "Keith",
+      "lastName": "Haring",
+      "countryIso2": "US"
+    }
+  ]
+}
+
+The above command returns JSON structured like this:
+
+{
+    "personalNames": [
+        {
+            "script": "LATIN",
+            "id": "0d7d6417-0bbb-4205-951d-b3473f605b56",
+            "firstName": "Keith",
+            "lastName": "Haring",
+            "score": 8.653234788906794,
+            "ethnicityAlt": "British",
+            "ethnicity": "German",
+            "lifted": false,
+            "countryIso2": "US",
+            "ethnicitiesTop": ["German", "British", "Dutch", "Danish", "Irish", "Norwegian", "Swedish", "Jewish", "NativeHawaiian", "Austrian"],
+            "probabilityCalibrated": 0.5197497794419499,
+            "probabilityAltCalibrated": 0.5197497794419499
+        }
+    ]
+}
+
+Values ​​returned only if the religious statistics option is enabled X-OPTION-RELIGION-STATS: True.
+
+{
+  religionStats: [
+    { religion: 'Christian', pct: 68.7 },
+    { religion: 'Unaffiliated', pct: 24.7 },
+    { religion: 'Muslim', pct: 5.8 },
+    { religion: 'Buddhist', pct: 0.3 },
+    { religion: 'Jewish', pct: 0.3 },
+    { religion: 'Other', pct: 0.1 },
+    { religion: 'Folk', pct: 0.05 },
+    { religion: 'Hindu', pct: 0.05 },
+  ],
+  religionStatsAlt: [
+    { religion: 'Christian', pct: 68.7 },
+    { religion: 'Unaffiliated', pct: 24.7 },
+    { religion: 'Muslim', pct: 5.8 },
+    { religion: 'Buddhist', pct: 0.3 },
+    { religion: 'Jewish', pct: 0.3 },
+    { religion: 'Other', pct: 0.1 },
+    { religion: 'Folk', pct: 0.05 },
+    { religion: 'Hindu', pct: 0.05 },
+  ],
+}
+
+Full Name Diaspora
+
+Full Name Diaspora feature analyzes an unsplit full name (first name and last name) to identify the most likely ethnicity or diaspora.
+The feature returns the most likely ethnicity or a diaspora and the top 10 most likely ethnicities, ordered from most likely to least likely. Each ethnicity returned is accompanied by a calibrated probability.
+information
+
+If the first and last name are clearly identifiable, the Name Diaspora feature will be slightly more accurate.
+
+    Description: Returns the most likely ethnicity or diaspora of up to 100 unsplit full names, according to their country of residence.
+    Precision:Precision gauge
+    Cost: 20 credits per name.
+    Test: Full Name Diaspora feature.
+
+HTTP request
+http request
+POST
+
+https://v2.namsor.com/NamSorAPIv2/api2/json/diasporaFullBatch
+
+Request header
+Property	Values	Required	Description
+X-API-KEY		Required	Your Namsor's services API key
+X-OPTION-RELIGION-STATS	True	Optional	Returns religious statistics for countries of origin, countries of residence, and estimated diasporas. By default the feature is disabled. Add to the Header of the request the parameter X-OPTION-RELIGION-STATS on True to activate it.
+Request bodyName	Type	Required	Description
+personalNames	Array of objects	Required	A list of personal full names with their country of residence.
+[{...}].id	St
+ring	Optional	Unique identifier.
+[{...}].name	String	Required	Unsplit full name (first name and last name).
+[{...}].countryIso2	String	Required	Country of residence, in ISO 3166-1 alpha-2 format. "US" by default (if no value indicated).
+ResponseName	Type	Description	Enumerators
+personalNames	Array of objects	List of submitted full names with their ethnicities.	
+[{...}].script	String	Name of the script used for the name, in ISO 15924 format.	Script
+[{...}].id	String	Provided unique identifier.	
+[{...}].name	String	Submitted full name.	
+[{...}].score	Number	Higher implies a more reliable result, score is not normalized.	
+[{...}].ethnicityAlt	String	Second most likely ethnicity.	Ethnicities or diasporas
+[{...}].ethnicity	String	Most likely ethnicity.	Ethnicities or diasporas
+[{...}].lifted	Boolean	Indicates if the output ethnicity is based on machine learning only, or further lifted as a known fact by a country-specific rule.	
+[{...}].countryIso2	String	Submitted country of residence, in ISO 3166-1 alpha-2 format.	Country of residence
+[{...}].ethnicitiesTop	Array	Top 10 most likely ethnicities, ordered from most likely to least likely.	Ethnicities or diasporas
+[{...}].probabilityCalibrated	Number	The calibrated probability that ethnicity has been guessed correctly. -1 = still calibrating .	
+[{...}].probabilityAltCalibrated	Number	The calibrated probability that ethnicity OR ethnicityAlt have been guessed correctly. -1 = still calibrating .	
+			Optional:
+X-OPTION-RELIGION-STATS = True
+[{...}].religionStats	Array of objects	Religious statistics in the country of origin of the most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of most likely diaspora (ethnicity).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the most likely diaspora (ethnicity).	
+[{...}].religionStatsAlt	Array of objects	Religious statistics in the country of origin of the second most likely diaspora. Returned only if the religious statistics option is enabled (X-OPTION-RELIGION-STATS: True).	
+[{...}].religion	String	Religion within country of origin of second most likely diaspora (ethnicityAlt).	Religions
+[{...}].pct	Number	Percentage of the population practicing this religion in the country of origin of the second most likely diaspora (ethnicityAlt).	
+Code sample:
+
+F
