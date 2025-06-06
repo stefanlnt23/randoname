@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -526,19 +526,23 @@ export default function Home() {
                           Number of Names
                         </FormLabel>
                         <FormControl>
-                          <Select value={field.value.toString()} onValueChange={(value) => field.onChange(parseInt(value))}>
-                            <SelectTrigger className="w-full h-12 border-2 focus:border-primary transition-colors">
-                              <SelectValue placeholder="Select number of names" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1">1 name</SelectItem>
-                              <SelectItem value="2">2 names</SelectItem>
-                              <SelectItem value="3">3 names</SelectItem>
-                              <SelectItem value="4">4 names</SelectItem>
-                              <SelectItem value="5">5 names</SelectItem>
-                              <SelectItem value="6">6 names</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <div className="grid grid-cols-3 gap-3">
+                            {[1, 2, 3, 4, 5, 6].map((number) => (
+                              <Button
+                                key={number}
+                                type="button"
+                                variant={field.value === number ? "default" : "outline"}
+                                onClick={() => field.onChange(number)}
+                                className={`h-12 font-semibold text-lg transition-all duration-300 ${
+                                  field.value === number
+                                    ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg scale-105'
+                                    : 'hover:border-primary hover:text-primary hover:scale-105'
+                                }`}
+                              >
+                                {number}
+                              </Button>
+                            ))}
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
