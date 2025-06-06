@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -522,28 +522,24 @@ export default function Home() {
                     name="number"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex justify-between items-center mb-3">
-                          <FormLabel className="text-sm font-medium">
-                            Number of Names
-                          </FormLabel>
-                          <span className="text-lg font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
-                            {field.value}
-                          </span>
-                        </div>
+                        <FormLabel className="text-sm font-medium">
+                          Number of Names
+                        </FormLabel>
                         <FormControl>
-                          <Slider
-                            min={1}
-                            max={10}
-                            step={1}
-                            value={[field.value]}
-                            onValueChange={(value) => field.onChange(value[0])}
-                            className="w-full"
-                          />
+                          <Select value={field.value.toString()} onValueChange={(value) => field.onChange(parseInt(value))}>
+                            <SelectTrigger className="w-full h-12 border-2 focus:border-primary transition-colors">
+                              <SelectValue placeholder="Select number of names" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">1 name</SelectItem>
+                              <SelectItem value="2">2 names</SelectItem>
+                              <SelectItem value="3">3 names</SelectItem>
+                              <SelectItem value="4">4 names</SelectItem>
+                              <SelectItem value="5">5 names</SelectItem>
+                              <SelectItem value="6">6 names</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </FormControl>
-                        <div className="flex justify-between text-xs text-muted-foreground">
-                          <span>1</span>
-                          <span>10</span>
-                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
