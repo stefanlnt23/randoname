@@ -1,0 +1,66 @@
+andom Name Generator
+Purpose & Audience:
+Create a clean, user-friendly website that generates random names for writers, new parents, game developers, content creators, and anyone needing name inspiration. The site should feel approachable and fun while being highly functional.
+Core Features:
+
+Generate random names using the behindthename.com API
+Filter by gender (male/female/unisex)
+Filter by cultural origin/language (English, Italian, French, etc.)
+Option to include surnames
+Generate multiple names at once (1-6 names)
+Display name meanings when available
+
+API Integration:
+
+Use the random name endpoint: https://www.behindthename.com/api/random.json
+API key: st518809570
+Parameters to implement:
+
+gender: f (female), m (male)
+usage: eng (English), ita (Italian), fre (French), etc.
+number: 1-6 names
+randomsurname: yes/no
+
+
+
+Design & Layout:
+
+Header: Clean logo/title "Random Name Generator"
+Control Panel: Simple form with dropdowns/buttons for:
+
+Gender selection (Male/Female/Any)
+Cultural origin dropdown (English, French, German, Italian, etc.)
+Number of names slider (1-6)
+Include surnames toggle
+Large "Generate Names" button
+
+
+Results Area: Display generated names in large, readable text with meanings below
+Color Scheme: Soft, welcoming colors (blues/greens) with good contrast
+Typography: Modern, clean fonts that are easy to read
+
+Technical Requirements:
+
+Responsive design (mobile-first)
+Fast loading with smooth animations
+Error handling for API failures
+Copy-to-clipboard functionality for generated names
+Save/favorite names feature (local storage)
+Loading states during API calls
+
+User Experience:
+
+One-click generation with sensible defaults
+Clear visual feedback when generating
+Easy to understand controls
+Helpful tooltips explaining cultural origins
+"Generate Another" button for quick re-generation
+
+Content Strategy:
+
+Brief explanation of the site's purpose
+Examples of use cases (writing, baby names, gaming)
+Attribution to behindthename.com
+Simple help/FAQ section
+
+Keep the interface minimal and intuitive - users should be able to generate names within seconds of landing on the page.
