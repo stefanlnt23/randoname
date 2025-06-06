@@ -35,7 +35,7 @@ const culturalOrigins = [
 export default function Home() {
   const [generatedNames, setGeneratedNames] = useState<NameData[]>([]);
   const [savedNames, setSavedNames] = useState<SavedName[]>([]);
-  const [numberOfNames, setNumberOfNames] = useState(3);
+  const [numberOfNames, setNumberOfNames] = useState<number>(3);
   const [showCopyToast, setShowCopyToast] = useState(false);
   const { toast } = useToast();
 
@@ -188,261 +188,284 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {/* Top Row: Gender Selection */}
-            <div className="mb-8">
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg font-semibold block text-center mb-4">Gender</FormLabel>
-                    <div className="flex flex-wrap gap-4 justify-center">
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          value=""
-                          id="any"
-                          checked={field.value === ""}
-                          onChange={() => field.onChange("")}
-                          className="sr-only peer"
-                        />
-                        <Label
-                          htmlFor="any"
-                          className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
-                        >
-                          Any Gender
-                        </Label>
-                      </div>
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          value="m"
-                          id="male"
-                          checked={field.value === "m"}
-                          onChange={() => field.onChange("m")}
-                          className="sr-only peer"
-                        />
-                        <Label
-                          htmlFor="male"
-                          className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
-                        >
-                          Male
-                        </Label>
-                      </div>
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          value="f"
-                          id="female"
-                          checked={field.value === "f"}
-                          onChange={() => field.onChange("f")}
-                          className="sr-only peer"
-                        />
-                        <Label
-                          htmlFor="female"
-                          className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
-                        >
-                          Female
-                        </Label>
-                      </div>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
-            {/* Three Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+            {/* Three Column Layout - Mobile Responsive */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
               {/* Left Column: Cultural Origins */}
-              <Card className="border-2 gradient-border p-1">
-                <div className="bg-card rounded-lg">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-center flex items-center justify-center gap-2">
-                      <Info className="w-5 h-5" />
-                      Cultural Origins
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <FormField
-                      control={form.control}
-                      name="usage"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <div className="grid grid-cols-2 gap-3">
-                              {culturalOrigins.map((origin) => (
-                                <div key={origin.value} className="flex items-center">
-                                  <input
-                                    type="radio"
-                                    value={origin.value}
-                                    id={origin.value}
-                                    checked={field.value === origin.value}
-                                    onChange={() => field.onChange(origin.value)}
-                                    className="sr-only peer"
-                                  />
-                                  <Label
-                                    htmlFor={origin.value}
-                                    className={`cultural-origin-btn w-full p-3 rounded-xl border-2 border-border cursor-pointer text-center transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-                                      field.value === origin.value 
-                                        ? 'border-primary bg-gradient-to-r from-primary/20 to-secondary/20 text-primary' 
-                                        : 'hover:border-primary/50'
-                                    }`}
-                                  >
-                                    <div className="text-xl mb-1">{origin.flag}</div>
-                                    <div className="font-medium text-xs">{origin.label}</div>
-                                  </Label>
-                                </div>
-                              ))}
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </div>
+              <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm order-1 md:order-1 lg:order-1">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg text-center flex items-center justify-center gap-2">
+                    <Info className="w-5 h-5 text-primary" />
+                    Cultural Origins
+                  </CardTitle>
+                  <p className="text-xs text-center text-muted-foreground">
+                    Choose a cultural background for names
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="usage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="grid grid-cols-2 gap-3">
+                            {culturalOrigins.map((origin) => (
+                              <div key={origin.value} className="flex items-center">
+                                <input
+                                  type="radio"
+                                  value={origin.value}
+                                  id={origin.value}
+                                  checked={field.value === origin.value}
+                                  onChange={() => field.onChange(origin.value)}
+                                  className="sr-only peer"
+                                />
+                                <Label
+                                  htmlFor={origin.value}
+                                  title={`Select ${origin.label} names`}
+                                  className={`cultural-origin-btn w-full p-3 rounded-xl border-2 cursor-pointer text-center transition-all duration-300 hover:scale-105 hover:shadow-md min-h-[72px] flex flex-col justify-center ${
+                                    field.value === origin.value 
+                                      ? 'border-primary bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20 text-primary shadow-lg ring-2 ring-primary/30' 
+                                      : 'border-border hover:border-primary/50 hover:bg-primary/5'
+                                  }`}
+                                >
+                                  <div className="text-xl mb-1">{origin.flag}</div>
+                                  <div className="font-medium text-xs leading-tight">{origin.label}</div>
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
               </Card>
 
               {/* Center Column: Controls and Generate Button */}
-              <Card className="border-2 gradient-border p-1">
-                <div className="bg-card rounded-lg">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-center">Settings</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Number of Names */}
-                    <FormField
-                      control={form.control}
-                      name="number"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium">
-                            Number of Names: {field.value}
-                          </FormLabel>
-                          <FormControl>
-                            <Slider
-                              min={1}
-                              max={10}
-                              step={1}
-                              value={[field.value]}
-                              onValueChange={(value) => field.onChange(value[0])}
-                              className="w-full"
+              <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm order-2 md:order-2 lg:order-2">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg text-center flex items-center justify-center gap-2">
+                    <Zap className="w-5 h-5 text-secondary" />
+                    Settings
+                  </CardTitle>
+                  <p className="text-xs text-center text-muted-foreground">
+                    Customize your name preferences
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Gender Selection */}
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium mb-3 block">Gender</FormLabel>
+                        <div className="grid grid-cols-1 gap-2">
+                          <div className="flex items-center">
+                            <input
+                              type="radio"
+                              value=""
+                              id="any-center"
+                              checked={field.value === ""}
+                              onChange={() => field.onChange("")}
+                              className="sr-only peer"
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Random Surname Toggle */}
-                    <FormField
-                      control={form.control}
-                      name="randomsurname"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-sm font-medium">
-                              Include Surnames
-                            </FormLabel>
-                            <div className="text-xs text-muted-foreground">
-                              Add random surnames to names
-                            </div>
+                            <Label
+                              htmlFor="any-center"
+                              className="w-full px-4 py-2 rounded-lg border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary/20 peer-checked:to-secondary/20 peer-checked:text-primary transition-all duration-300 hover:border-primary/50 font-medium text-center"
+                            >
+                              Any Gender
+                            </Label>
                           </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
+                          <div className="flex items-center">
+                            <input
+                              type="radio"
+                              value="m"
+                              id="male-center"
+                              checked={field.value === "m"}
+                              onChange={() => field.onChange("m")}
+                              className="sr-only peer"
                             />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                            <Label
+                              htmlFor="male-center"
+                              className="w-full px-4 py-2 rounded-lg border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary/20 peer-checked:to-secondary/20 peer-checked:text-primary transition-all duration-300 hover:border-primary/50 font-medium text-center"
+                            >
+                              Male
+                            </Label>
+                          </div>
+                          <div className="flex items-center">
+                            <input
+                              type="radio"
+                              value="f"
+                              id="female-center"
+                              checked={field.value === "f"}
+                              onChange={() => field.onChange("f")}
+                              className="sr-only peer"
+                            />
+                            <Label
+                              htmlFor="female-center"
+                              className="w-full px-4 py-2 rounded-lg border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary/20 peer-checked:to-secondary/20 peer-checked:text-primary transition-all duration-300 hover:border-primary/50 font-medium text-center"
+                            >
+                              Female
+                            </Label>
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <Separator />
+                  <Separator />
 
-                    {/* Generate Button */}
-                    <Button 
-                      type="submit" 
-                      disabled={generateNamesMutation.isPending}
-                      className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                    >
-                      {generateNamesMutation.isPending ? (
-                        <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-5 h-5 mr-2" />
-                          Generate Amazing Names
-                        </>
-                      )}
-                    </Button>
-                  </CardContent>
-                </div>
+                  {/* Number of Names */}
+                  <FormField
+                    control={form.control}
+                    name="number"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex justify-between items-center mb-3">
+                          <FormLabel className="text-sm font-medium">
+                            Number of Names
+                          </FormLabel>
+                          <span className="text-lg font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
+                            {field.value}
+                          </span>
+                        </div>
+                        <FormControl>
+                          <Slider
+                            min={1}
+                            max={10}
+                            step={1}
+                            value={[field.value]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            className="w-full"
+                          />
+                        </FormControl>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>1</span>
+                          <span>10</span>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Random Surname Toggle */}
+                  <FormField
+                    control={form.control}
+                    name="randomsurname"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border-2 border-border p-4 hover:border-primary/50 transition-colors duration-300">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-sm font-medium">
+                            Include Surnames
+                          </FormLabel>
+                          <div className="text-xs text-muted-foreground">
+                            Add random surnames to names
+                          </div>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <Separator />
+
+                  {/* Generate Button */}
+                  <Button 
+                    type="submit" 
+                    disabled={generateNamesMutation.isPending}
+                    className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg shadow-md"
+                  >
+                    {generateNamesMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Generating Names...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        Generate Amazing Names
+                      </>
+                    )}
+                  </Button>
+                </CardContent>
               </Card>
 
               {/* Right Column: Generated Names */}
-              <Card className="border-2 gradient-border p-1">
-                <div className="bg-card rounded-lg">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-center">Generated Names</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {generatedNames.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Sparkles className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                        <p className="text-muted-foreground text-lg mb-2">No names generated yet</p>
-                        <p className="text-muted-foreground/70 text-sm">
-                          Select your preferences and click generate!
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {generatedNames.map((nameData, index) => (
-                          <div
-                            key={index}
-                            className="bg-gradient-to-r from-background/50 to-muted/30 p-4 rounded-xl border border-border/50 hover:shadow-lg transition-all duration-300 group"
-                          >
-                            <div className="flex justify-between items-start mb-2">
-                              <span className="font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">
-                                {nameData.name}
-                              </span>
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => copyToClipboard(nameData.name)}
-                                  className="text-muted-foreground hover:text-secondary hover:bg-background/50"
-                                >
-                                  <Copy className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => saveName(nameData)}
-                                  className={`transition-colors duration-300 ${
-                                    isNameSaved(nameData.name)
-                                      ? 'text-accent'
-                                      : 'text-muted-foreground hover:text-accent'
-                                  } hover:bg-background/50`}
-                                >
-                                  <Heart className={`w-4 h-4 ${isNameSaved(nameData.name) ? 'fill-current' : ''}`} />
-                                </Button>
-                              </div>
+              <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg text-center flex items-center justify-center gap-2">
+                    <Sparkles className="w-5 h-5 text-accent" />
+                    Generated Names
+                  </CardTitle>
+                  <p className="text-xs text-center text-muted-foreground">
+                    Your personalized name suggestions
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {generatedNames.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Sparkles className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+                      <p className="text-muted-foreground text-lg mb-2 font-medium">No names generated yet</p>
+                      <p className="text-muted-foreground/70 text-sm leading-relaxed">
+                        Select your preferences and click generate to discover amazing names!
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {generatedNames.map((nameData, index) => (
+                        <div
+                          key={index}
+                          className="bg-gradient-to-br from-background/60 to-muted/20 p-4 rounded-xl border-2 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300 group"
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <span className="font-bold text-xl text-foreground group-hover:text-primary transition-colors duration-300">
+                              {nameData.name}
+                            </span>
+                            <div className="flex gap-2 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => copyToClipboard(nameData.name)}
+                                title="Copy to clipboard"
+                                className="text-muted-foreground hover:text-secondary hover:bg-background/50 h-8 w-8 p-0"
+                              >
+                                <Copy className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => saveName(nameData)}
+                                title={isNameSaved(nameData.name) ? "Remove from favorites" : "Add to favorites"}
+                                className={`transition-colors duration-300 h-8 w-8 p-0 ${
+                                  isNameSaved(nameData.name)
+                                    ? 'text-accent hover:text-accent/80'
+                                    : 'text-muted-foreground hover:text-accent'
+                                } hover:bg-background/50`}
+                              >
+                                <Heart className={`w-4 h-4 ${isNameSaved(nameData.name) ? 'fill-current' : ''}`} />
+                              </Button>
                             </div>
-                            {nameData.meaning && (
-                              <p className="text-muted-foreground text-sm leading-relaxed">
-                                {nameData.meaning}
-                              </p>
-                            )}
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </div>
+                          {nameData.meaning && (
+                            <p className="text-muted-foreground text-sm leading-relaxed border-t border-border/30 pt-3 mt-3">
+                              {nameData.meaning}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
               </Card>
             </div>
           </form>
