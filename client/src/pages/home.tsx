@@ -209,41 +209,39 @@ export default function Home() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-lg font-semibold">Gender</FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            className="flex flex-wrap gap-4 justify-center"
-                          >
-                            <div className="flex items-center">
-                              <RadioGroupItem value="" id="any" className="sr-only peer" />
-                              <Label
-                                htmlFor="any"
-                                className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
-                              >
-                                Any Gender
-                              </Label>
-                            </div>
-                            <div className="flex items-center">
-                              <RadioGroupItem value="m" id="male" className="sr-only peer" />
-                              <Label
-                                htmlFor="male"
-                                className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
-                              >
-                                Male
-                              </Label>
-                            </div>
-                            <div className="flex items-center">
-                              <RadioGroupItem value="f" id="female" className="sr-only peer" />
-                              <Label
-                                htmlFor="female"
-                                className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
-                              >
-                                Female
-                              </Label>
-                            </div>
-                          </RadioGroup>
-                        </FormControl>
+                        <RadioGroup
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          className="flex flex-wrap gap-4 justify-center"
+                        >
+                          <div className="flex items-center">
+                            <RadioGroupItem value="" id="any" className="sr-only peer" />
+                            <Label
+                              htmlFor="any"
+                              className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+                            >
+                              Any Gender
+                            </Label>
+                          </div>
+                          <div className="flex items-center">
+                            <RadioGroupItem value="m" id="male" className="sr-only peer" />
+                            <Label
+                              htmlFor="male"
+                              className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+                            >
+                              Male
+                            </Label>
+                          </div>
+                          <div className="flex items-center">
+                            <RadioGroupItem value="f" id="female" className="sr-only peer" />
+                            <Label
+                              htmlFor="female"
+                              className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
+                            >
+                              Female
+                            </Label>
+                          </div>
+                        </RadioGroup>
                         <FormMessage />
                       </FormItem>
                     )}
