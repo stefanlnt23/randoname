@@ -361,27 +361,32 @@ export default function Home() {
 
         {/* Results Area */}
         {generatedNames.length > 0 && (
-          <Card className="mb-8 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-xl">Generated Names</CardTitle>
-              <Button
-                variant="outline"
-                onClick={() => form.handleSubmit(onSubmit)()}
-                disabled={generateNamesMutation.isPending}
-                className="border-primary text-primary hover:bg-primary hover:text-white"
-              >
-                Generate Another
-              </Button>
+          <Card className="mb-8 border-2 border-secondary/30 bg-card/80 backdrop-blur-sm">
+            <CardHeader className="text-center">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-2xl bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
+                  Generated Names
+                </CardTitle>
+                <Button
+                  variant="outline"
+                  onClick={() => form.handleSubmit(onSubmit)()}
+                  disabled={generateNamesMutation.isPending}
+                  className="border-secondary text-secondary hover:bg-secondary hover:text-white transition-all duration-300"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Generate More
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="grid gap-4">
                 {generatedNames.map((nameData, index) => (
                   <div
                     key={`${nameData.name}-${index}`}
-                    className="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600"
+                    className="bg-gradient-to-r from-muted/50 to-muted/30 rounded-2xl p-6 border border-border/50 hover:shadow-lg transition-all duration-300 hover:scale-105"
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                         {nameData.name}
                       </h3>
                       <div className="flex space-x-2">
@@ -389,29 +394,27 @@ export default function Home() {
                           variant="ghost"
                           size="sm"
                           onClick={() => copyToClipboard(nameData.name)}
-                          className="p-2 text-slate-500 hover:text-primary hover:bg-white dark:hover:bg-slate-600"
-                          title="Copy to clipboard"
+                          className="p-3 text-muted-foreground hover:text-primary hover:bg-background/50 rounded-xl transition-all duration-300 hover:scale-110"
                         >
-                          <Copy className="w-4 h-4" />
+                          <Copy className="w-5 h-5" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => saveName(nameData)}
                           disabled={isNameSaved(nameData.name)}
-                          className={`p-2 transition-colors ${
+                          className={`p-3 transition-all duration-300 hover:scale-110 rounded-xl ${
                             isNameSaved(nameData.name)
-                              ? 'text-red-500'
-                              : 'text-slate-500 hover:text-red-500'
-                          } hover:bg-white dark:hover:bg-slate-600`}
-                          title="Save name"
+                              ? 'text-accent'
+                              : 'text-muted-foreground hover:text-accent'
+                          } hover:bg-background/50`}
                         >
-                          <Heart className={`w-4 h-4 ${isNameSaved(nameData.name) ? 'fill-current' : ''}`} />
+                          <Heart className={`w-5 h-5 ${isNameSaved(nameData.name) ? 'fill-current' : ''}`} />
                         </Button>
                       </div>
                     </div>
                     {nameData.meaning && (
-                      <p className="text-slate-600 dark:text-slate-300 text-sm">
+                      <p className="text-muted-foreground text-sm leading-relaxed">
                         {nameData.meaning}
                       </p>
                     )}
@@ -423,41 +426,54 @@ export default function Home() {
         )}
 
         {/* Saved Names */}
-        <Card className="mb-8 shadow-lg">
+        <Card className="mb-8 border-2 border-accent/20 bg-card/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-xl">Saved Names</CardTitle>
+            <CardTitle className="text-2xl bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent flex items-center gap-2">
+              <Heart className="w-6 h-6 text-accent" />
+              Saved Names
+            </CardTitle>
+            <p className="text-muted-foreground">Your favorite names collection</p>
           </CardHeader>
           <CardContent>
             {savedNames.length === 0 ? (
-              <p className="text-slate-500 text-sm">
-                No saved names yet. Click the heart icon on generated names to save them!
-              </p>
+              <div className="text-center py-8">
+                <Heart className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+                <p className="text-muted-foreground text-lg mb-2">No saved names yet</p>
+                <p className="text-muted-foreground/70 text-sm">
+                  Click the heart icon on generated names to save them here!
+                </p>
+              </div>
             ) : (
-              <div className="space-y-2">
+              <div className="grid gap-3">
                 {savedNames.map((saved, index) => (
                   <div
                     key={`${saved.name}-${saved.savedAt}`}
-                    className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                    className="flex justify-between items-center bg-gradient-to-r from-background/50 to-muted/30 p-4 rounded-xl border border-border/50 hover:shadow-lg transition-all duration-300"
                   >
-                    <div>
-                      <span className="font-medium text-slate-800 dark:text-slate-100">
-                        {saved.name}
-                      </span>
+                    <div className="flex-1">
+                      <span className="font-semibold text-lg text-foreground">{saved.name}</span>
                       {saved.meaning && (
-                        <p className="text-xs text-slate-600 dark:text-slate-300">
-                          {saved.meaning}
-                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">{saved.meaning}</p>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeSavedName(index)}
-                      className="p-1 text-slate-400 hover:text-red-500"
-                      title="Remove from saved"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(saved.name)}
+                        className="p-2 text-muted-foreground hover:text-primary rounded-lg transition-all duration-300 hover:scale-110"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeSavedName(index)}
+                        className="p-2 text-muted-foreground hover:text-destructive rounded-lg transition-all duration-300 hover:scale-110"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -465,64 +481,47 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Info Section */}
-        <Card className="bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 mb-8 border border-slate-200 dark:border-slate-600">
-          <CardContent className="p-6 md:p-8">
-            <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-4">How to Use</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-medium text-slate-700 dark:text-slate-200 mb-2">Perfect For:</h3>
-                <ul className="text-slate-600 dark:text-slate-300 text-sm space-y-1">
-                  <li>• Writers creating characters</li>
-                  <li>• Expecting parents finding inspiration</li>
-                  <li>• Game developers naming NPCs</li>
-                  <li>• Content creators needing pseudonyms</li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-medium text-slate-700 dark:text-slate-200 mb-2">Features:</h3>
-                <ul className="text-slate-600 dark:text-slate-300 text-sm space-y-1">
-                  <li>• Filter by gender and culture</li>
-                  <li>• Get name meanings when available</li>
-                  <li>• Copy names with one click</li>
-                  <li>• Save favorites locally</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8 mt-12">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <p className="text-slate-600 dark:text-slate-300 text-sm">
+      <footer className="text-center py-12 border-t border-border/50 mt-16">
+        <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-muted-foreground mb-6">
+          <Link href="/about">
+            <Button variant="ghost" size="sm" className="hover:text-primary">About</Button>
+          </Link>
+          <Link href="/contact">
+            <Button variant="ghost" size="sm" className="hover:text-secondary">Contact</Button>
+          </Link>
+          <Link href="/privacy">
+            <Button variant="ghost" size="sm" className="hover:text-accent">Privacy Policy</Button>
+          </Link>
+        </div>
+        <div className="space-y-2">
+          <p className="text-muted-foreground">
             Powered by{" "}
             <a
               href="https://www.behindthename.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary hover:text-secondary transition-colors duration-300"
             >
               Behind the Name
             </a>{" "}
-            API
+            database
           </p>
-          <p className="text-slate-500 dark:text-slate-400 text-xs mt-2">
-            Name meanings and origins provided by Behind the Name database
+          <p className="text-muted-foreground/70 text-xs">
+            Authentic names and origins from cultures worldwide
           </p>
         </div>
       </footer>
 
       {/* Copy Toast */}
       {showCopyToast && (
-        <div className="fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-transform duration-300">
-          <span className="flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            Copied to clipboard!
-          </span>
+        <div className="fixed bottom-4 right-4 bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl shadow-xl z-50 backdrop-blur-sm border border-white/20">
+          <div className="flex items-center gap-2">
+            <Copy className="w-4 h-4" />
+            Name copied to clipboard!
+          </div>
         </div>
       )}
     </div>
