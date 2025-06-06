@@ -10,7 +10,6 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -209,13 +208,16 @@ export default function Home() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-lg font-semibold">Gender</FormLabel>
-                        <RadioGroup
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          className="flex flex-wrap gap-4 justify-center"
-                        >
+                        <div className="flex flex-wrap gap-4 justify-center">
                           <div className="flex items-center">
-                            <RadioGroupItem value="" id="any" className="sr-only peer" />
+                            <input
+                              type="radio"
+                              value=""
+                              id="any"
+                              checked={field.value === ""}
+                              onChange={() => field.onChange("")}
+                              className="sr-only peer"
+                            />
                             <Label
                               htmlFor="any"
                               className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
@@ -224,7 +226,14 @@ export default function Home() {
                             </Label>
                           </div>
                           <div className="flex items-center">
-                            <RadioGroupItem value="m" id="male" className="sr-only peer" />
+                            <input
+                              type="radio"
+                              value="m"
+                              id="male"
+                              checked={field.value === "m"}
+                              onChange={() => field.onChange("m")}
+                              className="sr-only peer"
+                            />
                             <Label
                               htmlFor="male"
                               className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
@@ -233,7 +242,14 @@ export default function Home() {
                             </Label>
                           </div>
                           <div className="flex items-center">
-                            <RadioGroupItem value="f" id="female" className="sr-only peer" />
+                            <input
+                              type="radio"
+                              value="f"
+                              id="female"
+                              checked={field.value === "f"}
+                              onChange={() => field.onChange("f")}
+                              className="sr-only peer"
+                            />
                             <Label
                               htmlFor="female"
                               className="px-6 py-3 rounded-xl border-2 border-border cursor-pointer peer-checked:border-primary peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-secondary peer-checked:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium"
@@ -241,7 +257,7 @@ export default function Home() {
                               Female
                             </Label>
                           </div>
-                        </RadioGroup>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -261,13 +277,19 @@ export default function Home() {
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                             {culturalOrigins.map((origin) => (
                               <div key={origin.value} className="flex items-center">
-                                <RadioGroupItem value={origin.value} id={origin.value} className="sr-only peer" />
+                                <input
+                                  type="radio"
+                                  value={origin.value}
+                                  id={origin.value}
+                                  checked={field.value === origin.value}
+                                  onChange={() => field.onChange(origin.value)}
+                                  className="sr-only peer"
+                                />
                                 <Label
                                   htmlFor={origin.value}
                                   className={`cultural-origin-btn w-full p-4 rounded-xl border-2 border-border cursor-pointer text-center ${
                                     field.value === origin.value ? 'selected' : ''
                                   }`}
-                                  onClick={() => field.onChange(origin.value)}
                                 >
                                   <div className="text-2xl mb-2">{origin.flag}</div>
                                   <div className="font-medium text-sm">{origin.label}</div>

@@ -1,0 +1,69 @@
+
+Cookie warnings 4
+[vite] connecting... client:495:8
+[vite] connected. client:618:14
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools react-dom.development.js:29895:16
+Uncaught Error: `RadioGroupItem` must be used within `RadioGroup`
+    useContext2 create-context.tsx:75
+    RadioGroupItem radio-group.tsx:126
+    React 11
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+13 create-context.tsx:75:12
+Uncaught Error: `RadioGroupItem` must be used within `RadioGroup`
+    useContext2 create-context.tsx:75
+    RadioGroupItem radio-group.tsx:126
+    React 12
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+13 create-context.tsx:75:12
+The above error occurred in the <RadioGroupItem> component:
+
+RadioGroupItem<@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-radio-group.js?v=e5510ceb:446:59
+_c3@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/src/components/ui/radio-group.tsx:43:47
+div
+div
+createSlotClone/SlotClone<@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5S42QOQO.js?v=e5510ceb:79:40
+createSlot/Slot2<@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5S42QOQO.js?v=e5510ceb:56:40
+_c6<@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/src/components/ui/form.tsx:130:3
+div
+_c2<@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/src/components/ui/form.tsx:72:3
+Controller@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CXJMC5RA.js?v=e5510ceb:298:29
+FormField@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/src/components/ui/form.tsx:32:19
+form
+FormProvider@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CXJMC5RA.js?v=e5510ceb:102:33
+div
+_c9@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/src/components/ui/card.tsx:114:9
+div
+div
+_c@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/src/components/ui/card.tsx:20:8
+main
+div
+Home@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/src/pages/home.tsx:51:55
+Route@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=e5510ceb:323:13
+Switch@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=e5510ceb:379:14
+Router
+Provider@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-ZTXB6ZXA.js?v=e5510ceb:32:47
+TooltipProvider@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=e5510ceb:2217:7
+QueryClientProvider@https://69380557-434a-4eca-bd4a-cdd6754c87d9-00-2frc08umhwb6g.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=e5510ceb:2804:27
+App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. 13 react-dom.development.js:18704:14
+    React 12
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+Uncaught Error: `RadioGroupItem` must be used within `RadioGroup`
+    useContext2 create-context.tsx:75
+    RadioGroupItem radio-group.tsx:126
+    React 9
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+create-context.tsx:75:12
+
+​
+
