@@ -14,7 +14,8 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Heart, X, Zap, Loader2, Sparkles, Info, Menu, Search, BookOpen, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Copy, Heart, X, Zap, Loader2, Sparkles, Info, Menu, Search, BookOpen, Users, ChevronDown, ChevronUp, Filter } from "lucide-react";
 
 const culturalOrigins = [
   { value: "eng", label: "English", flag: "🇺🇸" },
@@ -148,6 +149,28 @@ export default function Home() {
     generateNamesMutation.mutate(data);
   };
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Spacebar to generate names (only if not typing in input)
+      if (event.code === 'Space' && event.target === document.body) {
+        event.preventDefault();
+        const formData = form.getValues();
+        generateNamesMutation.mutate(formData);
+      }
+      
+      // Escape to clear search
+      if (event.code === 'Escape') {
+        setSearchQuery('');
+        setSelectedName(null);
+        setRelatedNames([]);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [form, generateNamesMutation]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -181,8 +204,11 @@ export default function Home() {
   const copyToClipboard = async (name: string) => {
     try {
       await navigator.clipboard.writeText(name);
-      setShowCopyToast(true);
-      setTimeout(() => setShowCopyToast(false), 2000);
+      toast({
+        title: "Copied to clipboard!",
+        description: `"${name}" is ready to paste`,
+        duration: 2000,
+      });
     } catch (error) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -191,8 +217,11 @@ export default function Home() {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      setShowCopyToast(true);
-      setTimeout(() => setShowCopyToast(false), 2000);
+      toast({
+        title: "Copied to clipboard!",
+        description: `"${name}" is ready to paste`,
+        duration: 2000,
+      });
     }
   };
 
@@ -279,6 +308,10 @@ export default function Home() {
                 <Users className="w-4 h-4 text-secondary" />
                 Related Names
               </span>
+            </div>
+            <div className="mt-6 text-xs text-muted-foreground/70 text-center">
+              <kbd className="px-2 py-1 bg-muted/50 rounded text-xs">Space</kbd> to generate • 
+              <kbd className="px-2 py-1 bg-muted/50 rounded text-xs ml-1">Esc</kbd> to clear search
             </div>
           </div>
         </div>
@@ -531,13 +564,49 @@ export default function Home() {
                       {generatedNames.map((nameData, index) => (
                         <div
                           key={index}
-                          className="bg-gradient-to-br from-background/60 to-muted/20 p-4 rounded-xl border-2 border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300 group"
+                          className="bg-gradient-to-br from-background/80 to-muted/30 p-5 rounded-xl border-2 border-border/50 hover:border-primary/40 hover:shadow-xl transition-all duration-300 group"
                         >
-                          <div className="flex justify-between items-start mb-3">
-                            <span className="font-bold text-xl text-foreground group-hover:text-primary transition-colors duration-300">
-                              {nameData.name}
-                            </span>
+                          {/* Name Header */}
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex-1">
+                              <h3 className="font-bold text-2xl text-foreground group-hover:text-primary transition-colors duration-300 mb-1">
+                                {nameData.name}
+                              </h3>
+                              {nameData.usage && (
+                                <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                                  {nameData.usage}
+                                </span>
+                              )}
+                            </div>
                             <div className="flex gap-2 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleNameMeaning(nameData.name)}
+                                title="Show meaning"
+                                className="text-muted-foreground hover:text-primary hover:bg-background/50 h-8 w-8 p-0"
+                                disabled={lookupNameMutation.isPending}
+                              >
+                                {lookupNameMutation.isPending ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <BookOpen className="w-4 h-4" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => findRelatedNames(nameData.name, nameData.usage, nameData.gender)}
+                                title="Find related names"
+                                className="text-muted-foreground hover:text-secondary hover:bg-background/50 h-8 w-8 p-0"
+                                disabled={relatedNamesMutation.isPending}
+                              >
+                                {relatedNamesMutation.isPending ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <Users className="w-4 h-4" />
+                                )}
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -562,10 +631,38 @@ export default function Home() {
                               </Button>
                             </div>
                           </div>
-                          {nameData.meaning && (
-                            <p className="text-muted-foreground text-sm leading-relaxed border-t border-border/30 pt-3 mt-3">
-                              {nameData.meaning}
-                            </p>
+                          
+                          {/* Expandable Meaning Section */}
+                          {expandedNameMeanings.has(nameData.name) && (
+                            <div className="border-t border-border/30 pt-4 mt-4 space-y-3">
+                              {nameData.meaning && (
+                                <div>
+                                  <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <BookOpen className="w-4 h-4 text-primary" />
+                                    Meaning
+                                  </h4>
+                                  <p className="text-muted-foreground text-sm leading-relaxed bg-muted/30 p-3 rounded-lg">
+                                    {nameData.meaning}
+                                  </p>
+                                </div>
+                              )}
+                              {nameData.etymology && (
+                                <div>
+                                  <h4 className="text-sm font-semibold text-foreground mb-2">Etymology</h4>
+                                  <p className="text-muted-foreground text-sm leading-relaxed">
+                                    {nameData.etymology}
+                                  </p>
+                                </div>
+                              )}
+                              {nameData.gender && (
+                                <div>
+                                  <h4 className="text-sm font-semibold text-foreground mb-2">Gender</h4>
+                                  <span className="text-muted-foreground text-sm bg-primary/10 px-2 py-1 rounded">
+                                    {nameData.gender === 'm' ? 'Masculine' : nameData.gender === 'f' ? 'Feminine' : nameData.gender}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
                       ))}
@@ -576,6 +673,34 @@ export default function Home() {
             </div>
           </form>
         </Form>
+
+        {/* Related Names Section */}
+        {relatedNames.length > 0 && (
+          <Card className="mb-8 border-2 border-secondary/20 bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent flex items-center gap-2">
+                <Users className="w-6 h-6 text-secondary" />
+                Related Names
+              </CardTitle>
+              <p className="text-muted-foreground">Names similar to your selection</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {relatedNames.map((relatedName, index) => (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-background/60 to-muted/20 p-3 rounded-lg border border-border/50 hover:border-secondary/50 hover:shadow-md transition-all duration-300 group cursor-pointer"
+                    onClick={() => searchNameMutation.mutate(relatedName)}
+                  >
+                    <span className="font-medium text-foreground group-hover:text-secondary transition-colors duration-300">
+                      {relatedName}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Saved Names Section */}
         <Card className="mb-8 border-2 border-accent/20 bg-card/80 backdrop-blur-sm">
