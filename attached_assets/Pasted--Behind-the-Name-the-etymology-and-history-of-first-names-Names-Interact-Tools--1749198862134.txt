@@ -1,0 +1,78 @@
+
+Behind the Name - the etymology and history of first names 	
+	
+	
+
+    Names
+    Interact
+    Tools
+
+	
+stefanlenta  ▾
+API Documentation
+Home » API
+About
+Documentation
+Gateway
+
+Behindthename.com's API is currently limited to three functions. Requests are made via HTTPS with parameters passed in the query string. Results are returned in XML or JSON format.
+
+In all cases an API access key must be used. The key associated with your user account is st518809570.
+Look up
+
+This will return information about a given name.
+
+XML URL: https://www.behindthename.com/api/lookup.xml
+JSON URL: https://www.behindthename.com/api/lookup.json
+
+Parameters:
+parameter	required	default	description
+key	Y	(none)	your API access key
+name	Y	(none)	the name to look up
+exact	N	no	whether the name supplied is exact (meaning there are no missing diacritics)
+
+Return value: name details
+
+XML example: https://www.behindthename.com/api/lookup.xml?name=mary&key=st518809570
+JSON example: https://www.behindthename.com/api/lookup.json?name=mary&key=st518809570
+Random Name
+
+This will return a random name.
+
+XML URL: https://www.behindthename.com/api/random.xml
+JSON URL: https://www.behindthename.com/api/random.json
+
+Parameters:
+parameter	required	default	description
+key	Y	(none)	your API access key
+gender	N	(none)	gender to restrict names to (eg. f for feminine names)
+usage	N	(none)	usage to restrict names to (eg. eng for English-language names)
+number	N	2	number of given names to return (max 6)
+randomsurname	N	no	pass yes to generate a random surname as well
+
+Return value: list of names
+
+XML example: https://www.behindthename.com/api/random.xml?usage=ita&gender=f&key=st518809570
+JSON example: https://www.behindthename.com/api/random.json?usage=ita&gender=f&key=st518809570
+Related Names
+
+This will return potential aliases for a given name.
+
+XML URL: https://www.behindthename.com/api/related.xml
+JSON URL: https://www.behindthename.com/api/related.json
+
+Parameters:
+parameter	required	default	description
+key	Y	(none)	your API access key
+name	Y	(none)	the name to look up
+usage	N	(none)	usage to restrict aliases to (eg. eng for English-language names)
+gender	N	(none)	gender to restrict aliases to (eg. f for feminine names)
+
+Return value: list of names
+
+XML example: https://www.behindthename.com/api/related.xml?name=richard&usage=eng&key=st518809570
+JSON example: https://www.behindthename.com/api/related.json?name=richard&usage=eng&key=st518809570
+Home » API
+	
+About · Help · Copyright · Terms · Privacy · Contact
+Dark Mode

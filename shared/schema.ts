@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const generateNamesSchema = z.object({
-  gender: z.enum(['m', 'f', '']).optional(),
+  gender: z.string().optional(),
   usage: z.string(),
   number: z.number().min(1).max(6),
   randomsurname: z.boolean()
@@ -13,9 +13,25 @@ export const nameDataSchema = z.object({
   usage: z.string().optional()
 });
 
+// API returns simple string arrays for random names
+export const randomApiResponseSchema = z.object({
+  names: z.array(z.string()).optional(),
+  error: z.string().optional()
+});
+
+// Lookup API returns detailed name information
+export const lookupApiResponseSchema = z.array(z.object({
+  name: z.string(),
+  gender: z.string().optional(),
+  usages: z.array(z.object({
+    usage_code: z.string(),
+    usage_full: z.string(),
+    usage_gender: z.string().optional()
+  })).optional()
+}));
+
 export const apiResponseSchema = z.object({
   names: z.array(nameDataSchema).optional(),
-  name: nameDataSchema.optional(),
   error: z.string().optional()
 });
 
